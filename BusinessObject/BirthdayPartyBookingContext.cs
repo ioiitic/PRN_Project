@@ -75,7 +75,9 @@ namespace BusinessObject
                     .HasColumnName("ID")
                     .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.Date).HasColumnName("DATE");
+                entity.Property(e => e.Date)
+                    .HasColumnType("date")
+                    .HasColumnName("DATE");
 
                 entity.Property(e => e.DeleteFlag).HasColumnName("DELETE_FLAG");
 
@@ -130,8 +132,8 @@ namespace BusinessObject
                 entity.ToTable("PLACE");
 
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ID");
+                    .HasColumnName("ID")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.Address)
                     .HasMaxLength(1000)

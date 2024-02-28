@@ -14,11 +14,11 @@ namespace BusinessObject
 
         public Guid Id { get; set; }
         public Guid? GuestId { get; set; }
-        public int? Date { get; set; }
         public int? TotalPrice { get; set; }
         public string Note { get; set; }
         public Guid? PlaceId { get; set; }
         public int? DeleteFlag { get; set; }
+        public DateTime? Date { get; set; }
 
         public virtual Account Guest { get; set; }
         public virtual Place Place { get; set; }
