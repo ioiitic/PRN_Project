@@ -29,17 +29,25 @@
                 {
                     options.RootDirectory = "/Pages";
                 });
-                services.AddSession();
+            services.AddDistributedMemoryCache(); // Adds a default in-memory implementation of IDistributedCache
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // You can set the timeout duration as per your need
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            }); ;
                 services.AddControllers()
                     .AddJsonOptions(options =>
                     {
                         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
                     });
             services.AddDbContext<BirthdayPartyBookingContext>();
-            }
+            services.AddMvc().AddRazorPagesOptions(option => option.Conventions.AddPageRoute("/Login_Register/Login", ""));
+        }
 
-            // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
             {
                 if (env.IsDevelopment())
                 {
@@ -63,7 +71,6 @@
                 app.UseEndpoints(endpoints =>
                 {
                     endpoints.MapRazorPages(); 
-                    endpoints.MapFallbackToPage("/MainPage"); // Map to your desired root page
                 });
             }
         }
