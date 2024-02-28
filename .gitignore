@@ -1,5 +1,3 @@
-CocCanServer/.vs
-CocCanServer/Tester
-CocCanServer/CocCanServer/*.json
+.vs
 **/bin
 **/obj

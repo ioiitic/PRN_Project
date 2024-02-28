@@ -24,8 +24,18 @@ namespace BirthDayPartyBooking
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache(); // Adds a default in-memory implementation of IDistributedCache
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // You can set the timeout duration as per your need
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+            services.AddControllersWithViews()
+                    .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve
+            );
             services.AddRazorPages();
-
+            services.AddMvc().AddRazorPagesOptions(option => option.Conventions.AddPageRoute("/Login_Register/Login", ""));
             services.AddDbContext<BirthdayPartyBookingContext>();
         }
 
@@ -42,7 +52,7 @@ namespace BirthDayPartyBooking
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseSession();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
