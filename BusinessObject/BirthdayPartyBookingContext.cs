@@ -29,7 +29,7 @@ namespace BusinessObject
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server=(local);database=BirthdayPartyBooking;uid=sa;password=12345678;");
+                optionsBuilder.UseSqlServer("server=.\\SQLExpress;database=BirthdayPartyBooking;uid=sa;password=12345;");
             }
         }
 
@@ -83,11 +83,21 @@ namespace BusinessObject
 
                 entity.Property(e => e.GuestId).HasColumnName("GUEST_ID");
 
+                entity.Property(e => e.HostId).HasColumnName("HOST_ID");
+
                 entity.Property(e => e.Note)
                     .HasMaxLength(300)
                     .HasColumnName("NOTE");
 
+                entity.Property(e => e.OrderDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("ORDER_DATE");
+
                 entity.Property(e => e.PlaceId).HasColumnName("PLACE_ID");
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(100)
+                    .HasColumnName("STATUS");
 
                 entity.Property(e => e.TotalPrice).HasColumnName("TOTAL_PRICE");
 

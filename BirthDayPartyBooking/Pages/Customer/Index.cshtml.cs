@@ -6,25 +6,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
+using Microsoft.Extensions.Hosting;
 
 namespace BirthDayPartyBooking.Pages.Customer
 {
     public class IndexModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly BirthdayPartyBookingContext _context;
 
-        public IndexModel(BusinessObject.BirthdayPartyBookingContext context)
+        public IndexModel(BirthdayPartyBookingContext context)
         {
             _context = context;
         }
 
-        public IList<Order> Order { get;set; }
+        public IList<Account> Hosts { get;set; }
 
         public async Task OnGetAsync()
         {
-            Order = await _context.Orders
-                .Include(o => o.Guest)
-                .Include(o => o.Place).ToListAsync();
+            Hosts = await _context.Accounts.Where(a => a.Role == 2 && a.DeleteFlag == 0).ToListAsync();
         }
     }
 }

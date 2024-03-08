@@ -10,8 +10,9 @@ namespace BirthDayPartyBooking.Pages
     {
         public async Task<IActionResult> OnGetAsync()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToPage("/Login");
+            HttpContext.Session.Remove("Role");
+            HttpContext.Session.Remove("UserId");
+            return RedirectToPage("/Login_Register/Login");
         }
     }
 }

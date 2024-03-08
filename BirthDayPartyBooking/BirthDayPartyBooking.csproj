@@ -17,8 +17,4 @@
     <ProjectReference Include="..\BusinessObject\BusinessObject.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\Admin\Place\" />
-  </ItemGroup>
-
 </Project>

@@ -23,7 +23,7 @@ namespace BirthDayPartyBooking.Pages.Login_Register
         public Account Account { get; set; }
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
             if (!ModelState.IsValid)
             {
@@ -31,7 +31,7 @@ namespace BirthDayPartyBooking.Pages.Login_Register
             }
 
             _context.Accounts.Add(Account);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             return RedirectToPage("./Login");
         }

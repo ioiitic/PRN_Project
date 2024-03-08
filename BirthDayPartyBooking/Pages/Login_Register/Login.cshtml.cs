@@ -5,55 +5,66 @@ using System.Linq;
 using System;
 using Microsoft.AspNetCore.Http;
 using BusinessObject;
+using System.ComponentModel.DataAnnotations;
 
 namespace BirthDayPartyBooking.Pages.Login_Register
 {
     public class LoginPageModel : PageModel
     {
-        private readonly IConfiguration _configuration;
         private readonly BirthdayPartyBookingContext _context;
 
-        public LoginPageModel(IConfiguration configuration, BirthdayPartyBookingContext context)
+        public LoginPageModel(BirthdayPartyBookingContext context)
         {
-            _configuration = configuration;
             _context = context;
         }
 
         [BindProperty]
+        [Required]
         public string Email { get; set; }
 
         [BindProperty]
+        [Required]
         public string Password { get; set; }
+
+
+        public IActionResult OnGet()
+        {
+            return Page();
+        }
 
         public IActionResult OnPostLogin()
         {
-
-            var account = _context.Accounts.Where(s => s.Email == Email && s.Password == Password && s.DeleteFlag ==0).FirstOrDefault();
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+            var account = _context.Accounts.Where(s => s.Email == Email && s.Password == Password && s.DeleteFlag == 0).FirstOrDefault();
 
             if (account != null)
             {
                 HttpContext.Session.SetInt32("Role", account.Role.Value);
+                HttpContext.Session.SetString("UserId", account.Id.ToString());
                 if (account.Role.Value == 0)
                 {
                     return RedirectToPage("/Admin/Accounts/Index");
                 } else
                 if (account.Role.Value == 1)
                 {
-                    return RedirectToPage("/Admin/Accounts/Index");
+                    return RedirectToPage("/Customer/Index");
                 } else
                 {
-                    return RedirectToPage("/Admin/Accounts/Index");
+                    return RedirectToPage("/Admin/ServiceManagement/Index");
                 }
-
+            } else
+            {
+                ModelState.AddModelError("Password", "Invalid login attempt.");
+                return Page();
             }
 
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return Page();
         }
 
         public IActionResult OnPostRegister()
         {
-            // Handle registration
             return RedirectToPage("/Login_Register/Register");
         }
     }

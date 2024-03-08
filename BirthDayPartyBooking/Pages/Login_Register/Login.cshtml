@@ -10,13 +10,17 @@
     <div class="form-group">
         <label for="Email">Email:</label>
         <input id="Email" asp-for="Email" class="form-control" type="email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+
     </div>
     <div class="form-group">
         <label for="Password">Password:</label>
-        <input id="Password" asp-for="Password" class="form-control" type="password" />
+        <input id="Password" asp-for="Password" class="form-control" type="password" />                
+        <span asp-validation-for="Password" class="text-danger"></span>
+
     </div>
     <div class="form-group">
-        <button type="submit" class="btn btn-primary" asp-page-handler="Login">Login</button>
-        <button type="submit" class="btn btn-secondary" asp-page-handler="Register">Register</button>
+        <input type="submit" value="Login" class="btn btn-primary" asp-page-handler="Login" />
+        <input type="submit" value="Register" class="btn btn-secondary" asp-page-handler="Register" />
     </div>
 </form>
