@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BirthDayPartyBooking", "Bir
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessObject", "BusinessObject\BusinessObject.csproj", "{3263CCB7-41C9-4601-98EB-06E1F84A08E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{E5EFCD12-21F2-49B0-9D2B-FC499380757D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Repository.csproj", "{E5EFCD12-21F2-49B0-9D2B-FC499380757D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAO", "DAO\DAO.csproj", "{CC39763F-4CB5-4054-9A21-76694A6F0156}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAO", "DAO\DAO.csproj", "{CC39763F-4CB5-4054-9A21-76694A6F0156}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

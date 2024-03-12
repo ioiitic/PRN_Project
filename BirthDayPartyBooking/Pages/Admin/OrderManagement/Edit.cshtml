@@ -11,7 +11,6 @@
     <h4>Order</h4>
     <hr />
     <dl class="row">
-        <input type="hidden" asp-for="Order.Id" />
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Order.Id)
         </dt>
@@ -55,26 +54,35 @@
             @Html.DisplayFor(model => model.Order.Note)
         </dd>
     </dl>
-    <dl class="row">
-        <form method="post" asp-page-handler="Accept">
-            <div class="form-group">
-                <input type="submit" value="Accept" class="btn btn-primary" />
-            </div>
-        </form>
-        <form method="post" asp-page-handler="Reject">
-            <div class="form-group">
-                <input type="submit" value="Reject" class="btn btn-secondary" />
-            </div>
-        </form>
-    </dl>
-
-    <dl class="row">
-        <form method="post" asp-page-handler="Close">
-            <div class="form-group">
-                <input type="submit" value="Close" class="btn btn-primary" />
-            </div>
-        </form>
-    </dl>
+    @if (@Model.Order.Status == 0)
+    {
+        <dl class="row">
+            <form method="post" asp-page-handler="Accept">
+                <input type="hidden" asp-for="Order.Id" />
+                <div class="form-group">
+                    <input type="submit" value="Accept" class="btn btn-primary" />
+                </div>
+            </form>
+            <form method="post" asp-page-handler="Reject">
+                <input type="hidden" asp-for="Order.Id" />
+                <div class="form-group">
+                    <input type="submit" value="Reject" class="btn btn-secondary" />
+                </div>
+            </form>
+        </dl>
+    }
+    
+    @if (@Model.Order.Status == 1)
+    {
+        <dl class="row">
+            <form method="post" asp-page-handler="Close">
+                <input type="hidden" asp-for="Order.Id" />
+                <div class="form-group">
+                    <input type="submit" value="Close" class="btn btn-primary" />
+                </div>
+            </form>
+        </dl>
+    }
 </div>
 <div class="row">
     <table class="table">
@@ -121,49 +129,6 @@
         </tbody>
     </table>
 </div>
-@*
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Order.Id" />
-            <div class="form-group">
-                <label asp-for="Order.GuestId" class="control-label"></label>
-                <select asp-for="Order.GuestId" class="form-control" asp-items="ViewBag.GuestId"></select>
-                <span asp-validation-for="Order.GuestId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.TotalPrice" class="control-label"></label>
-                <input asp-for="Order.TotalPrice" class="form-control" />
-                <span asp-validation-for="Order.TotalPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.Note" class="control-label"></label>
-                <input asp-for="Order.Note" class="form-control" />
-                <span asp-validation-for="Order.Note" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.PlaceId" class="control-label"></label>
-                <select asp-for="Order.PlaceId" class="form-control" asp-items="ViewBag.PlaceId"></select>
-                <span asp-validation-for="Order.PlaceId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.DeleteFlag" class="control-label"></label>
-                <input asp-for="Order.DeleteFlag" class="form-control" />
-                <span asp-validation-for="Order.DeleteFlag" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.Date" class="control-label"></label>
-                <input asp-for="Order.Date" class="form-control" />
-                <span asp-validation-for="Order.Date" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-*@
 <div>
     <a asp-page="./Index">Back to List</a>
 </div>

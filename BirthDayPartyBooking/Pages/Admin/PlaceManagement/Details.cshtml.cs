@@ -28,7 +28,6 @@ namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
                 return NotFound();
             }
 
-
             string Id = HttpContext.Session.GetString("UserId");
 
             Place = await _context.Places.Where(p => p.HostId.ToString() == Id)

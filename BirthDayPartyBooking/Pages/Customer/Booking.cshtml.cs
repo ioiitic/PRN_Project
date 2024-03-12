@@ -37,6 +37,7 @@ namespace BirthDayPartyBooking.Pages.Customer
 
         public IActionResult OnGet()
         {
+            Order = new Order();
             if (HttpContext.Session.GetString("OrderModelState") != null)
             {
                 ModelState.AddModelError("Order", "Invalid!"); 
@@ -51,22 +52,23 @@ namespace BirthDayPartyBooking.Pages.Customer
 
             Customer = _context.Accounts.FirstOrDefault(c => c.Id.ToString() == customerId);
             Host = _context.Accounts.FirstOrDefault(c => c.Id.ToString() == Id);
-            ViewData["ServiceId"] = new SelectList(_context.Services.Where(p => p.HostId == Host.Id).Select(p => new
+            ViewData["ServiceId"] = new SelectList(_context.Services.Where(p => p.HostId == Host.Id).OrderBy(s => s.ServiceTypeId).Select(p => new
             {
                 p.Id,
                 NameAndPrice = p.ServiceType.Name + " - " + p.Name + " - $" + p.Price.ToString()
             }), "Id", "NameAndPrice");
             ViewData["GuestId"] = new SelectList(_context.Accounts, "Id", "Name");
-            ViewData["PlaceId"] = new SelectList(_context.Places.Where(p => p.HostId == Host.Id).Select(p => new {
+            ViewData["PlaceId"] = new SelectList(_context.Places.Where(p => p.HostId == Host.Id).Select(p => new
+            {   
                 p.Id,
-                NameAndAddress = p.Name + ", " + p.Address
+                NameAndAddress = p.Name + ", " + p.Address + " - $" + p.Price
             }), "Id", "NameAndAddress");
 
             var orderDetailsJson = HttpContext.Session.GetString("OrderDetails");
             OrderDetails = (orderDetailsJson != null) ? JsonConvert.DeserializeObject<List<OrderDetail>>(orderDetailsJson)
                 : new List<OrderDetail>();
 
-            var totalPrice = 0;
+            var totalPrice = (Order.Place==null)?0:Order.Place.Price;
 
             foreach(OrderDetail orderDetail in OrderDetails)
             {
@@ -75,7 +77,9 @@ namespace BirthDayPartyBooking.Pages.Customer
                 orderDetail.Service.ServiceType = _context.ServiceTypes.FirstOrDefault(t => t.Id == typeId);
                 totalPrice += orderDetail.Price.Value;
             }
-            Order = new Order();
+
+            OrderDetails = OrderDetails.OrderBy(o => o.Service.ServiceTypeId).ToList();
+
             Order.TotalPrice = totalPrice;
             return Page();
         }

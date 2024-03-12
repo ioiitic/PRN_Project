@@ -19,7 +19,7 @@
             <div class="form-group">
                 <label asp-for="Order.TotalPrice" class="control-label"></label>
                 <input type="hidden" asp-for="Order.TotalPrice" />
-                <input value="$@Model.Order.TotalPrice" class="form-control" readonly/>
+                <input id="totalPrice" value="$@Model.Order.TotalPrice" class="form-control" readonly />
             </div>
             <div class="form-group">
                 <label asp-for="Order.Date" class="control-label"></label>
@@ -89,7 +89,7 @@
                     </div>
                 </td>
                 <td>
-                    <input asp-for="Number" class="form-control" value="1" type="number" min="1" />
+                    <input asp-for="Number" id="numberInput" class="form-control" value="1" type="number" min="1" />
                 </td>
                 <td>
                     <div class="form-group">
@@ -118,4 +118,40 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            updateNumberInput();
+            updateTotalPrice();
+            function updateNumberInput() {
+                var selectedValue = $('#OrderDetail_ServiceId').val(); 
+                var selectedText = $('#OrderDetail_ServiceId option[value="' + selectedValue + '"]').text();
+                var serviceType = selectedText.split(' - ')[0];
+
+                if (serviceType !== 'Dish') {
+                    $('#numberInput').prop('disabled', true);
+                    $('#numberInput').val(1);
+                    @Model.Number = 1;
+                } else {
+                    $('#numberInput').prop('disabled', false);
+                    $('#numberInput').val(1);
+                }
+            }
+
+            function updateTotalPrice() {
+                var selectedValue = $('#Order_PlaceId').val();
+                var placePriceText = $('#Order_PlaceId option[value="' + selectedValue + '"]').text().split(' - ')[1];
+                var placePriceNumeric = parseFloat(placePriceText.replace(/[^\d.]/g, ''));
+                var totalPrice = parseInt('@Model.Order.TotalPrice'.replace('$', '')) + parseInt(placePriceNumeric);
+                $('#totalPrice').val('$'+totalPrice.toString());
+            }
+
+            $('#Order_PlaceId').change(function () {
+                updateTotalPrice();
+            });
+
+            $('#OrderDetail_ServiceId').change(function () {
+                updateNumberInput();
+            });
+        });
+    </script>
 }

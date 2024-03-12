@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using BusinessObject;
+using Microsoft.AspNetCore.Http;
 
 namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
 {
@@ -27,7 +28,6 @@ namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
         [BindProperty]
         public Place Place { get; set; }
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -35,6 +35,8 @@ namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
                 return Page();
             }
 
+            Place.HostId = Guid.Parse(HttpContext.Session.GetString("UserId"));
+            Place.DeleteFlag = 0;
             _context.Places.Add(Place);
             await _context.SaveChangesAsync();
 

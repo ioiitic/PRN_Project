@@ -18,6 +18,7 @@ namespace BirthDayPartyBooking.Pages.Customer.OrderHistory
             _context = context;
         }
 
+        [BindProperty]
         public Order Order { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
 
@@ -42,5 +43,20 @@ namespace BirthDayPartyBooking.Pages.Customer.OrderHistory
             }
             return Page();
         }
+
+        public async Task<IActionResult> OnPostPay()
+        {
+            return RedirectToPage("/Customer/Payment/PayBooking", new {id=Order.Id});
+        }
+
+        public async Task<IActionResult> OnPostCancel ()
+        {
+            Order = _context.Orders.FirstOrDefault(o => o.Id == Order.Id);
+            Order.Status = 5;
+            _context.Orders.Update(Order);
+            await _context.SaveChangesAsync();
+            return RedirectToPage("./Index");
+        }
+
     }
 }

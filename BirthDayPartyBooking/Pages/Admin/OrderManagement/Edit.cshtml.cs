@@ -13,13 +13,14 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
 {
     public class EditModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly BirthdayPartyBookingContext _context;
 
-        public EditModel(BusinessObject.BirthdayPartyBookingContext context)
+        public EditModel(BirthdayPartyBookingContext context)
         {
             _context = context;
         }
 
+        [BindProperty]
         public Order Order { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
 
@@ -49,19 +50,21 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
             return Page();
         }
             
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAccept()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _context.Attach(Order).State = EntityState.Modified;
+            Order = await _context.Orders
+                .Include(o => o.Guest)
+                .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == Order.Id);
+            Order.Status = 1;
 
             try
             {
+                _context.Orders.Update(Order);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -76,7 +79,69 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage(new { id = Order.Id });
+        }
+        public async Task<IActionResult> OnPostReject()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            Order = await _context.Orders
+                .Include(o => o.Guest)
+                .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == Order.Id);
+            Order.Status = 2;
+
+            try
+            {
+                _context.Orders.Update(Order);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!OrderExists(Order.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToPage(new { id = Order.Id });
+        }
+        public async Task<IActionResult> OnPostClose()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            Order = await _context.Orders
+                .Include(o => o.Guest)
+                .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == Order.Id);
+            Order.Status = 3;
+
+            try
+            {
+                _context.Orders.Update(Order);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!OrderExists(Order.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToPage(new { id = Order.Id });
         }
 
         private bool OrderExists(Guid id)

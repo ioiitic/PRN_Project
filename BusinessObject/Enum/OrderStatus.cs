@@ -8,6 +8,6 @@ namespace BusinessObject.Enum
 {
     public static class OrderStatus
     {
-        public static string[] StatusNames = { "Open", "Accepted", "Rejected", "Closed"};
+        public static string[] StatusNames = { "Open", "Accepted", "Rejected", "Closed", "Paid", "Canceled"};
     }
 }
