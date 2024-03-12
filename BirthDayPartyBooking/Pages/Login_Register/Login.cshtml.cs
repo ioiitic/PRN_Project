@@ -63,9 +63,5 @@ namespace BirthDayPartyBooking.Pages.Login_Register
 
         }
 
-        public IActionResult OnPostRegister()
-        {
-            return RedirectToPage("/Login_Register/Register");
-        }
     }
 }
