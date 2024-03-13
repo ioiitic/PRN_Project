@@ -18,7 +18,7 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
 
         public async Task OnGetAsync(Guid? id)
         {
-            string vnp_Returnurl = "http://localhost:44304/Customer/Payment/ReturnPay";
+            string vnp_Returnurl = "https://localhost:44304/Customer/Payment/ReturnPay";
             string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
             string vnp_TmnCode = "SF27X1PR";
             string vnp_HashSecret = "YNUDIRUGCVFYUHTPAKZTREPIYHRHPFSI";

@@ -1,14 +1,25 @@
+using BusinessObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Protocols;
 using System;
+using System.Threading.Tasks;
 
 namespace BirthDayPartyBooking.Pages.Customer.Payment
 {
     public class ReturnPayModel : PageModel
     {
-        public void OnGet()
+        private readonly BirthdayPartyBookingContext _context;
+
+        public ReturnPayModel(BirthdayPartyBookingContext context)
+        {
+            _context = context;
+        }
+        //string vnp_Amount, string vnp_BankCode, string vnp_BankTranNo, string vnp_CardType, string vnp_OrderInfo, string vnp_PayDate,
+        //string vnp_ResponseCode, string vnp_TmnCode, string vnp_TransactionNo, string vnp_TransactionStatus, string vnp_TxnRef, string vnp_SecureHash
+        public async Task<IActionResult> OnGetAsync(string vnp_Amount, string vnp_BankCode, string vnp_BankTranNo, string vnp_CardType, string vnp_OrderInfo, string vnp_PayDate,
+            string vnp_ResponseCode, string vnp_TmnCode, string vnp_TransactionNo, string vnp_TransactionStatus, string vnp_TxnRef, string vnp_SecureHash)
         {
             string vnp_HashSecret = "YNUDIRUGCVFYUHTPAKZTREPIYHRHPFSI";
             var vnpayData = Request.Query;
@@ -24,13 +35,9 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
                 }
             }
 
-            long orderId = Convert.ToInt64(vnpay.GetResponseData("vnp_TxnRef"));
-            long vnpayTranId = Convert.ToInt64(vnpay.GetResponseData("vnp_TransactionNo"));
-            string vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
-            string vnp_TransactionStatus = vnpay.GetResponseData("vnp_TransactionStatus");
-            String vnp_SecureHash = "YNUDIRUGCVFYUHTPAKZTREPIYHRHPFSI";
+            long orderId = Convert.ToInt64(vnp_TxnRef);
+            long vnpayTranId = Convert.ToInt64(vnp_TransactionNo);
             String TerminalID = "SF27X1PR";
-            long vnp_Amount = Convert.ToInt64(vnpay.GetResponseData("vnp_Amount")) / 100;
             string bankCode = vnpay.GetResponseData("vnp_BankCode");
 
             bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, vnp_HashSecret);
@@ -54,7 +61,7 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
                 //log.InfoFormat("Invalid signature, InputData={0}", Request.RawUrl);
                 //displayMsg.InnerText = "Co loi xay ra trong quá trinh xu ly";
             }
-            RedirectToPage("/OrderHistory");
+            return RedirectToPage("/Customer/OrderHistory/Index");
         }
     }
 }
