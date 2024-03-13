@@ -5,7 +5,7 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+@* <h1>Details</h1>
 
 <div>
     <h4>Service</h4>
@@ -36,8 +36,42 @@
             @Html.DisplayFor(model => model.Service.ServiceType.Name)
         </dd>
     </dl>
-</div>
-<div>
+</div> *@
+<section class="bg-white dark:bg-gray-900">
+    <div class="py-8 px-4 mx-auto max-w-screen-md text-center lg:py-16 lg:px-12">
+
+        <h1 class="mb-4 text-4xl font-bold tracking-tight leading-none text-gray-900 lg:mb-6 md:text-5xl xl:text-6xl dark:text-white">Detail Service</h1>
+        <div class="flex w-5 justify-content-lg-around">
+            <p class="font-light text-gray-500 md:text-lg xl:text-xl dark:text-gray-400"> @Html.DisplayNameFor(model => model.Service.Name)</p>
+            <p class="font-light text-gray-500 md:text-lg xl:text-xl dark:text-gray-400">  @Html.DisplayFor(model => model.Service.Name)</p>
+        </div>
+        <div class="flex w-5 justify-content-lg-around">
+            <p class="font-light text-gray-500 md:text-lg xl:text-xl dark:text-gray-400">  @Html.DisplayNameFor(model => model.Service.Description)</p>
+            <p class="font-light text-gray-500 md:text-lg xl:text-xl dark:text-gray-400">  @Html.DisplayFor(model => model.Service.Description)</p>
+        </div>
+        <div class="flex w-5 justify-content-lg-around">
+            <p class="font-light text-gray-500 md:text-lg xl:text-xl dark:text-gray-400">  @Html.DisplayNameFor(model => model.Service.Price)</p>
+            <p class="font-light text-gray-500 md:text-lg xl:text-xl dark:text-gray-400">  @Html.DisplayFor(model => model.Service.Price)</p>
+        </div>
+        <div class="flex w-5 justify-content-lg-around">
+            <p class="font-light text-gray-500 md:text-lg xl:text-xl dark:text-gray-400">    @Html.DisplayNameFor(model => model.Service.ServiceType)</p>
+            <p class="font-light text-gray-500 md:text-lg xl:text-xl dark:text-gray-400"> @Html.DisplayFor(model => model.Service.ServiceType.Name)</p>
+        </div>
+    </div>
+    <button type="button" class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+        <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+        </svg>
+        <a asp-page="./Edit" asp-route-id="@Model.Service.Id">Edit</a> |
+    </button>
+    <button type="button" class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-500 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+        <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+        </svg>
+        <a asp-page="./Index">Back to List</a>
+    </button>
+</section>
+@* <div>
     <a asp-page="./Edit" asp-route-id="@Model.Service.Id">Edit</a> |
     <a asp-page="./Index">Back to List</a>
-</div>
+</div> *@
