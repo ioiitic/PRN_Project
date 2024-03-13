@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace BirthDayPartyBooking.Pages.Customer
 {
     public class IndexModel : PageModel
     {
         private readonly BirthdayPartyBookingContext _context;
+        private readonly IConfiguration _configuration;
 
         public IndexModel(BirthdayPartyBookingContext context)
         {
