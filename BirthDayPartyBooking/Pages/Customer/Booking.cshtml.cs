@@ -152,7 +152,7 @@ namespace BirthDayPartyBooking.Pages.Customer
         public IActionResult OnPostBack()
         {
             HttpContext.Session.Remove("OrderDetails");
-            return RedirectToPage("./Index");
+            return RedirectToPage("/Customer/Index");
         }
     }
 }

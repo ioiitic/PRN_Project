@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -71,10 +70,23 @@
 <body class="dark">
     <nav class="bg-white border-gray-200 dark:bg-gray-800">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-            <a href="/Customer" class="flex items-center space-x-3 rtl:space-x-reverse">
+            <a href="/Admin" class="flex items-center space-x-3 rtl:space-x-reverse">
                 <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" />
-                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Birthday booking</span>
+                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Birthday Booking</span>
             </a>
+            <div class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu-2">
+                <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+                    <li>
+                        <a asp-page="/Admin/OrderManagement" class="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Manage Order</a>
+                    </li>
+                    <li>
+                        <a asp-page="/Admin/PlaceManagement" class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Manage Place</a>
+                    </li>
+                    <li>
+                        <a asp-page="/Admin/ServiceManagement" class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Manage Service</a>
+                    </li>
+                </ul>
+            </div>
             <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                 <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
                     <span class="sr-only">Open user menu</span>
@@ -87,7 +99,7 @@
                             <a asp-page="/Customer" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Profile</a>
                         </li>
                         <li>
-                            <a asp-page="/Customer/OrderHistory/Index" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Order History</a>
+                            <a asp-page="/Customer/OrderHistory" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Order History</a>
                         </li>
                         <li>
                             <a asp-page="/Logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
@@ -103,7 +115,7 @@
             </div>
         </div>
     </nav>
-    <div class="container h-full pt-8 pb-32 px-32 bg-gray-50 dark:bg-gray-900">
+    <div class="container bg-gray-50 dark:bg-gray-900">
         @RenderBody()
     </div>
     <footer class="p-4 bg-white sm:p-6 dark:bg-gray-800">
@@ -177,6 +189,7 @@
         </div>
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
