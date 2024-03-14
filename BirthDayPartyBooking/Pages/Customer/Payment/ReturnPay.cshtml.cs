@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Protocols;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BirthDayPartyBooking.Pages.Customer.Payment
@@ -35,7 +36,7 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
                 }
             }
 
-            long orderId = Convert.ToInt64(vnp_TxnRef);
+            string orderId = Convert.ToInt64(vnp_TxnRef).ToString().Substring(0, 36);
             long vnpayTranId = Convert.ToInt64(vnp_TransactionNo);
             String TerminalID = "SF27X1PR";
             string bankCode = vnpay.GetResponseData("vnp_BankCode");
@@ -45,10 +46,13 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
             {
                 if (vnp_ResponseCode == "00" && vnp_TransactionStatus == "00")
                 {
+                    var order = _context.Orders.FirstOrDefault(o => o.Id.ToString() == orderId);
+                    order.Status = 4;
+                    _context.Orders.Update(order);
+                    _context.SaveChanges();
                 }
                 else
                 {
-                    //log.InfoFormat("Thanh toan loi, OrderId={0}, VNPAY TranId={1},ResponseCode={2}", orderId, vnpayTranId, vnp_ResponseCode);
                 }
                 //displayTmnCode.InnerText = "Ma Website (Terminal ID):" + TerminalID;
                 //displayTxnRef.InnerText = "Ma giao dich thanh toan:" + orderId.ToString();
@@ -61,7 +65,7 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
                 //log.InfoFormat("Invalid signature, InputData={0}", Request.RawUrl);
                 //displayMsg.InnerText = "Co loi xay ra trong quá trinh xu ly";
             }
-            return RedirectToPage("/Customer/OrderHistory/Index");
+            return RedirectToPage("/Customer/OrderHistory/Detils", new {id = orderId});
         }
     }
 }

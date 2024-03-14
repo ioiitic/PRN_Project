@@ -30,6 +30,7 @@ namespace BirthDayPartyBooking.Pages.Login_Register
                 return Page();
             }
 
+            Account.DeleteFlag = 0;
             _context.Accounts.Add(Account);
             _context.SaveChanges();
 
