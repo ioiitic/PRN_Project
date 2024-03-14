@@ -6,16 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
 {
     public class DeleteModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly IOrderRepository orderRepo;
+        private readonly IOrderDetailRepository orderDetailRepo;
 
-        public DeleteModel(BusinessObject.BirthdayPartyBookingContext context)
+        public DeleteModel(IOrderRepository orderRepo, IOrderDetailRepository orderDetailRepo)
         {
-            _context = context;
+            this.orderRepo = orderRepo;
+            this.orderDetailRepo = orderDetailRepo; 
         }
 
         [BindProperty]
@@ -28,9 +31,7 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
                 return NotFound();
             }
 
-            Order = await _context.Orders
-                .Include(o => o.Guest)
-                .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == id);
+            Order = await orderRepo.GetOrderByOrderID(id.Value);
 
             if (Order == null)
             {
@@ -46,12 +47,11 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
                 return NotFound();
             }
 
-            Order = await _context.Orders.FindAsync(id);
+            Order = await orderRepo.GetOrderByOrderID(id.Value);
 
             if (Order != null)
             {
-                _context.Orders.Remove(Order);
-                await _context.SaveChangesAsync();
+                await orderRepo.Remove(Order);
             }
 
             return RedirectToPage("./Index");

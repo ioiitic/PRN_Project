@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Microsoft.AspNetCore.Http;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
 {
     public class DeleteModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly IServiceRepository serviceRepo;
 
-        public DeleteModel(BusinessObject.BirthdayPartyBookingContext context)
+        public DeleteModel(IServiceRepository serviceRepo)
         {
-            _context = context;
+            this.serviceRepo = serviceRepo;
         }
 
         [BindProperty]
@@ -32,10 +33,7 @@ namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
 
             string Id = HttpContext.Session.GetString("UserId");
 
-            Service = await _context.Services.Where(s => s.HostId.ToString() == Id && s.DeleteFlag == 0)
-                .Include(s => s.Host)
-                .Include(s => s.ServiceType).FirstOrDefaultAsync(m => m.Id == id);
-
+            Service = await serviceRepo.GetServiceByServiceIDAndHostID(id.Value, Id);
             if (Service == null)
             {
                 return NotFound();
@@ -50,13 +48,12 @@ namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
                 return NotFound();
             }
 
-            Service = await _context.Services.FindAsync(id);
+            Service = serviceRepo.GetServiceByServiceID(id.Value);
 
             if (Service != null)
             {
                 Service.DeleteFlag = 1;
-                _context.Services.Update(Service);
-                await _context.SaveChangesAsync();
+                await serviceRepo.Update(Service);
             }
 
             return RedirectToPage("./Index");

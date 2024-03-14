@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Protocols;
+using Repository.IRepo;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,11 +12,11 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
 {
     public class ReturnPayModel : PageModel
     {
-        private readonly BirthdayPartyBookingContext _context;
+        private readonly IOrderRepository orderRepo;
 
-        public ReturnPayModel(BirthdayPartyBookingContext context)
+        public ReturnPayModel(IOrderRepository orderRepo)
         {
-            _context = context;
+            this.orderRepo = orderRepo;
         }
         //string vnp_Amount, string vnp_BankCode, string vnp_BankTranNo, string vnp_CardType, string vnp_OrderInfo, string vnp_PayDate,
         //string vnp_ResponseCode, string vnp_TmnCode, string vnp_TransactionNo, string vnp_TransactionStatus, string vnp_TxnRef, string vnp_SecureHash
@@ -38,7 +39,7 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
 
             string orderId = Convert.ToInt64(vnp_TxnRef).ToString().Substring(0, 36);
             long vnpayTranId = Convert.ToInt64(vnp_TransactionNo);
-            String TerminalID = "SF27X1PR";
+            //String TerminalID = "SF27X1PR";
             string bankCode = vnpay.GetResponseData("vnp_BankCode");
 
             bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, vnp_HashSecret);
@@ -46,10 +47,9 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
             {
                 if (vnp_ResponseCode == "00" && vnp_TransactionStatus == "00")
                 {
-                    var order = _context.Orders.FirstOrDefault(o => o.Id.ToString() == orderId);
+                    var order =await orderRepo.GetOrderByOrderID(Guid.Parse(orderId));
                     order.Status = 4;
-                    _context.Orders.Update(order);
-                    _context.SaveChanges();
+                    await orderRepo.Update(order);    
                 }
                 else
                 {

@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Microsoft.AspNetCore.Http;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Customer.OrderHistory
 {
     public class IndexModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly IOrderRepository orderRepo;
 
-        public IndexModel(BusinessObject.BirthdayPartyBookingContext context)
+        public IndexModel(IOrderRepository orderRepo)
         {
-            _context = context;
+            this.orderRepo = orderRepo;
         }
 
         public IList<Order> Order { get;set; }
@@ -25,10 +26,7 @@ namespace BirthDayPartyBooking.Pages.Customer.OrderHistory
         {
             string Id = HttpContext.Session.GetString("UserId");
 
-            Order = await _context.Orders
-                .Where(o => o.GuestId.ToString() == Id)
-                .Include(o => o.Guest)
-                .Include(o => o.Place).ToListAsync();
+            Order = await orderRepo.GetOrderByCustomerID(Id);
         }
     }
 }

@@ -6,16 +6,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Customer.OrderHistory
 {
     public class DetailsModel : PageModel
     {
-        private readonly BirthdayPartyBookingContext _context;
+        private readonly IOrderRepository orderRepo;
+        private readonly IOrderDetailRepository orderDetailRepo;
 
-        public DetailsModel(BirthdayPartyBookingContext context)
+
+        public DetailsModel(IOrderRepository orderRepo, IOrderDetailRepository orderDetailRepo)
         {
-            _context = context;
+            this.orderRepo = orderRepo; 
+            this.orderDetailRepo = orderDetailRepo;
         }
 
         [BindProperty]
@@ -29,13 +33,8 @@ namespace BirthDayPartyBooking.Pages.Customer.OrderHistory
                 return NotFound();
             }
 
-            Order = await _context.Orders
-                .Include(o => o.Guest)
-                .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == id);
-            OrderDetails = _context.OrderDetails
-                .Where(o => o.OrderId == Order.Id)
-                .Include(o => o.Service)
-                .Include(o => o.Service.ServiceType).ToList();
+            Order = await orderRepo.GetOrderByOrderID(id.Value);
+            OrderDetails =await orderDetailRepo.GetOrderDetailByOrderID(Order.Id);
 
             if (Order == null)
             {
@@ -44,17 +43,16 @@ namespace BirthDayPartyBooking.Pages.Customer.OrderHistory
             return Page();
         }
 
-        public async Task<IActionResult> OnPostPay()
+        public IActionResult OnPostPay()
         {
             return RedirectToPage("/Customer/Payment/PayBooking", new {id=Order.Id});
         }
 
         public async Task<IActionResult> OnPostCancel ()
         {
-            Order = _context.Orders.FirstOrDefault(o => o.Id == Order.Id);
+            Order = await orderRepo.GetOrderByOrderID(Order.Id);
             Order.Status = 5;
-            _context.Orders.Update(Order);
-            await _context.SaveChangesAsync();
+            await orderRepo.Update(Order);
             return RedirectToPage("./Index");
         }
 

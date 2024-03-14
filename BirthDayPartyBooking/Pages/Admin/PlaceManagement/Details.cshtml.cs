@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Microsoft.AspNetCore.Http;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
 {
     public class DetailsModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly IPlaceRepository placeRepo;
 
-        public DetailsModel(BusinessObject.BirthdayPartyBookingContext context)
+        public DetailsModel(IPlaceRepository placeRepo)
         {
-            _context = context;
+            this.placeRepo = placeRepo;
         }
 
         public Place Place { get; set; }
@@ -30,8 +31,7 @@ namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
 
             string Id = HttpContext.Session.GetString("UserId");
 
-            Place = await _context.Places.Where(p => p.HostId.ToString() == Id)
-                .Include(p => p.Host).FirstOrDefaultAsync(m => m.Id == id);
+            Place = await placeRepo.GetAllPlaceByHostIDAndPlaceID(Id, id.Value);
 
             if (Place == null)
             {

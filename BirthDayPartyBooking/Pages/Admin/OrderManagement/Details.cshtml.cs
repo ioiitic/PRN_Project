@@ -6,16 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
 {
     public class DetailsModel : PageModel
     {
-        private readonly BirthdayPartyBookingContext _context;
+        private readonly IOrderRepository orderRepo;
+        private readonly IOrderDetailRepository orderDetailRepo;
 
-        public DetailsModel(BirthdayPartyBookingContext context)
+        public DetailsModel(IOrderRepository orderRepo, IOrderDetailRepository orderDetailRepo)
         {
-            _context = context;
+            this.orderRepo = orderRepo;
+            this.orderDetailRepo = orderDetailRepo;
         }
 
         public Order Order { get; set; }
@@ -28,13 +31,8 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
                 return NotFound();
             }
 
-            Order = await _context.Orders
-                .Include(o => o.Guest)
-                .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == id);
-            OrderDetails = _context.OrderDetails
-                .Where(o => o.OrderId == Order.Id)
-                .Include(o => o.Service)
-                .Include(o => o.Service.ServiceType).ToList();
+            Order = await orderRepo.GetOrderByOrderID(id.Value);
+            OrderDetails = await orderDetailRepo.GetOrderDetailByOrderID(Order.Id);
 
             if (Order == null)
             {

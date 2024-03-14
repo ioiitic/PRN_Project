@@ -8,16 +8,17 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Microsoft.AspNetCore.Http;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
 {
     public class EditModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly IPlaceRepository placeRepo;
 
-        public EditModel(BusinessObject.BirthdayPartyBookingContext context)
+        public EditModel(IPlaceRepository placeRepo)
         {
-            _context = context;
+            this.placeRepo = placeRepo;
         }
 
         [BindProperty]
@@ -33,8 +34,7 @@ namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
 
             string Id = HttpContext.Session.GetString("UserId");
 
-            Place = await _context.Places.Where(p => p.HostId.ToString() == Id)
-                .Include(p => p.Host).FirstOrDefaultAsync(m => m.Id == id);
+            Place = await placeRepo.GetAllPlaceByHostIDAndPlaceID(Id, id.Value);
 
             if (Place == null)
             {
@@ -52,15 +52,14 @@ namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
                 return Page();
             }
 
-            _context.Attach(Place).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await placeRepo.Update(Place);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PlaceExists(Place.Id))
+                if (placeRepo.GetPlaceByPlaceID(Place.Id)==null)
                 {
                     return NotFound();
                 }
@@ -73,9 +72,5 @@ namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
             return RedirectToPage("./Index");
         }
 
-        private bool PlaceExists(Guid id)
-        {
-            return _context.Places.Any(e => e.Id == id);
-        }
     }
 }

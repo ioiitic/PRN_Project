@@ -8,16 +8,17 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Microsoft.AspNetCore.Http;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
 {
     public class EditModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly IServiceRepository serviceRepo;
 
-        public EditModel(BusinessObject.BirthdayPartyBookingContext context)
+        public EditModel(IServiceRepository serviceRepo)
         {
-            _context = context;
+            this.serviceRepo = serviceRepo;
         }
 
         [BindProperty]
@@ -33,15 +34,13 @@ namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
 
             string Id = HttpContext.Session.GetString("UserId");
 
-            Service = await _context.Services.Where(s => s.HostId.ToString() == Id && s.DeleteFlag == 0)
-                .Include(s => s.Host)
-                .Include(s => s.ServiceType).FirstOrDefaultAsync(m => m.Id == id);
+            Service = await serviceRepo.GetServiceByServiceIDAndHostID(id.Value, Id);
 
             if (Service == null)
             {
                 return NotFound();
             }
-           ViewData["ServiceTypeId"] = new SelectList(_context.ServiceTypes, "Id", "Name");
+            ViewData["ServiceTypeId"] = new SelectList(serviceRepo.GetAllServiceTypes(), "Id", "Name") ;
             return Page();
         }
 
@@ -51,18 +50,18 @@ namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
         {
             if (!ModelState.IsValid)
             {
+                ViewData["ServiceTypeId"] = new SelectList(serviceRepo.GetAllServiceTypes(), "Id", "Name");
                 return Page();
             }
 
-            _context.Attach(Service).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await serviceRepo.Update(Service);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ServiceExists(Service.Id))
+                if (serviceRepo.GetServiceByServiceID(Service.Id)==null)
                 {
                     return NotFound();
                 }
@@ -73,11 +72,6 @@ namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
             }
 
             return RedirectToPage("./Index");
-        }
-
-        private bool ServiceExists(Guid id)
-        {
-            return _context.Services.Any(e => e.Id == id);
         }
     }
 }

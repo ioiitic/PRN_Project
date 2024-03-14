@@ -7,22 +7,23 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using BusinessObject;
 using Microsoft.AspNetCore.Http;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
 {
     public class CreateModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly IServiceRepository serviceRepo;
 
-        public CreateModel(BusinessObject.BirthdayPartyBookingContext context)
+        public CreateModel(IServiceRepository serviceRepo)
         {
-            _context = context;
+            this.serviceRepo = serviceRepo;
         }
 
         public IActionResult OnGet()
         {
-        ViewData["HostId"] = new SelectList(_context.Accounts, "Id", "Email");
-        ViewData["ServiceTypeId"] = new SelectList(_context.ServiceTypes, "Id", "Name");
+       
+        ViewData["ServiceTypeId"] = new SelectList(serviceRepo.GetAllServiceTypes(), "Id", "Name");
             return Page();
         }
 
@@ -38,8 +39,7 @@ namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
             }
             Service.HostId = Guid.Parse(HttpContext.Session.GetString("UserId"));
             Service.DeleteFlag = 0;
-            _context.Services.Add(Service);
-            await _context.SaveChangesAsync();
+            await serviceRepo.AddNew(Service);
 
             return RedirectToPage("./Index");
         }

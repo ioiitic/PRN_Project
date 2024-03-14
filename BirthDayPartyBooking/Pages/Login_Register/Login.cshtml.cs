@@ -6,16 +6,17 @@ using System;
 using Microsoft.AspNetCore.Http;
 using BusinessObject;
 using System.ComponentModel.DataAnnotations;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Login_Register
 {
     public class LoginPageModel : PageModel
     {
-        private readonly BirthdayPartyBookingContext _context;
+        private readonly IAccountRepository accountRepo;
 
-        public LoginPageModel(BirthdayPartyBookingContext context)
+        public LoginPageModel(IAccountRepository accountRepo)
         {
-            _context = context;
+            this.accountRepo = accountRepo;
         }
 
         [BindProperty]
@@ -38,7 +39,7 @@ namespace BirthDayPartyBooking.Pages.Login_Register
             {
                 return Page();
             }
-            var account = _context.Accounts.Where(s => s.Email == Email && s.Password == Password && s.DeleteFlag == 0).FirstOrDefault();
+            var account = accountRepo.CheckLogin(Email, Password);
 
             if (account != null)
             {

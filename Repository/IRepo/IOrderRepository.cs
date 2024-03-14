@@ -11,8 +11,9 @@ namespace Repository.IRepo
     {
         Task<List<Order>> GetAllActiveorders();
         Task<List<Order>> GetOrderByHostID(string id);
+        Task<List<Order>> GetOrderByCustomerID(string id);
+
         Task<Order> GetOrderByOrderID(Guid id);
-        bool CheckOrderExist(DateTime orderDate, string hostId, Guid placeID);
         bool CheckOrderExist(Order order, string Id);
         void AddNew(Order order);
         Task Update(Order order);

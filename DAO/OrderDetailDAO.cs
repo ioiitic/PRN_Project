@@ -33,7 +33,7 @@ namespace DAO
             List<OrderDetail> orderDetails;
             try
             {
-                orderDetails = await myDB.OrderDetails.Where(o => o.OrderId == id)
+                orderDetails = await myDB.OrderDetails.AsNoTracking().Where(o => o.OrderId == id)
                                                       .Include(o => o.Service)
                                                       .Include(o => o.Service.ServiceType).ToListAsync();
             }

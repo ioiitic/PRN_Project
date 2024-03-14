@@ -55,12 +55,12 @@ namespace DAO
             }
             return accounts;
         }
-        public async Task<Account> GetAccountByAccountId(string id)
+        public Account GetAccountByAccountId(string id)
         {
             Account accounts;
             try
             {
-                accounts = await myDB.Accounts.FirstOrDefaultAsync(c => c.Id.ToString() == id);
+                accounts =  myDB.Accounts.AsNoTracking().FirstOrDefault(c => c.Id.ToString() == id);
             }
             catch (Exception ex)
             {
@@ -80,6 +80,23 @@ namespace DAO
                 throw new Exception(ex.Message);
             }
             return account;
+        }
+        public bool CheckEmailExist(string email)
+        {
+            bool check = false;
+            try
+            {
+                var customers = myDB.Accounts.AsNoTracking().Where(s => s.DeleteFlag == 0 && s.Email == email).FirstOrDefault();
+                if (customers!=null)
+                {
+                    check = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return check;
         }
 
         public void AddNew(Account account)

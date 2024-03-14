@@ -13,9 +13,11 @@ namespace Repository.Repo
     {
         public void AddNew(Account account) => AccountDAO.Instance.AddNew(account);
 
+        public bool CheckEmailExist(string email) => AccountDAO.Instance.CheckEmailExist(email);
+
         public Account CheckLogin(string Email, string Password) => AccountDAO.Instance.CheckLogin(Email, Password);
 
-        public Task<Account> GetAccountByAccountId(string id) => AccountDAO.Instance.GetAccountByAccountId(id);
+        public Account GetAccountByAccountId(string id) => AccountDAO.Instance.GetAccountByAccountId(id);
 
         public Task<List<Account>> GetAllActiveAccounts() => AccountDAO.Instance.GetAllActiveAccounts();
 

@@ -6,16 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
 {
     public class DeleteModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly IPlaceRepository placeRepo;
 
-        public DeleteModel(BusinessObject.BirthdayPartyBookingContext context)
+        public DeleteModel(IPlaceRepository placeRepo)
         {
-            _context = context;
+            this.placeRepo = placeRepo;
         }
 
         [BindProperty]
@@ -28,8 +29,7 @@ namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
                 return NotFound();
             }
 
-            Place = await _context.Places
-                .Include(p => p.Host).FirstOrDefaultAsync(m => m.Id == id);
+            Place = await placeRepo.GetPlaceByPlaceID(id.Value);
 
             if (Place == null)
             {
@@ -45,12 +45,11 @@ namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
                 return NotFound();
             }
 
-            Place = await _context.Places.FindAsync(id);
+            Place = await placeRepo.GetPlaceByPlaceID(id.Value);
 
             if (Place != null)
             {
-                _context.Places.Remove(Place);
-                await _context.SaveChangesAsync();
+                await placeRepo.Remove(Place);
             }
 
             return RedirectToPage("./Index");

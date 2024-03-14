@@ -32,7 +32,7 @@ namespace DAO
             List<Service> services = new List<Service>();
             try
             {
-                services = myDB.Services.Where(p => p.HostId == Id && p.DeleteFlag == 0).OrderBy(s => s.ServiceTypeId).ToList();
+                services = myDB.Services.AsNoTracking().Where(p => p.HostId == Id && p.DeleteFlag == 0).Include(s=>s.ServiceType).OrderBy(s => s.ServiceTypeId).ToList();
             }
             catch (Exception ex)
             {
@@ -47,7 +47,7 @@ namespace DAO
             List<Service> services = new List<Service>();
             try
             {
-                services = await myDB.Services.Where(s => s.HostId.ToString() == Id && s.DeleteFlag == 0)
+                services = await myDB.Services.AsNoTracking().Where(s => s.HostId.ToString() == Id && s.DeleteFlag == 0)
                 .Include(s => s.Host)
                 .Include(s => s.ServiceType).ToListAsync();
             }
@@ -64,7 +64,7 @@ namespace DAO
             List<Service> services = new List<Service>();
             try
             {
-                services = myDB.Services.Where(p => p.DeleteFlag == 0).ToList();
+                services = myDB.Services.AsNoTracking().Where(p => p.DeleteFlag == 0).ToList();
             }
             catch (Exception ex)
             {
@@ -78,7 +78,7 @@ namespace DAO
             List<ServiceType> serviceTypes = new List<ServiceType>();
             try
             {
-                serviceTypes = myDB.ServiceTypes.ToList();
+                serviceTypes = myDB.ServiceTypes.AsNoTracking().ToList();
             }
             catch (Exception ex)
             {
@@ -92,7 +92,7 @@ namespace DAO
             Service service = new Service();
             try
             {
-                service = myDB.Services.FirstOrDefault(s => s.Id == Id);
+                service = myDB.Services.AsNoTracking().FirstOrDefault(s => s.Id == Id);
             }
             catch (Exception ex)
             {
@@ -107,7 +107,7 @@ namespace DAO
             Service service = new Service();
             try
             {
-                service = await myDB.Services.Where(s => s.HostId.ToString() == HostID && s.DeleteFlag == 0)
+                service = await myDB.Services.AsNoTracking().Where(s => s.HostId.ToString() == HostID && s.DeleteFlag == 0)
                 .Include(s => s.Host)
                 .Include(s => s.ServiceType).FirstOrDefaultAsync(m => m.Id == Id);
             }
@@ -124,7 +124,7 @@ namespace DAO
             ServiceType serviceType = new ServiceType();
             try
             {
-                serviceType = myDB.ServiceTypes.FirstOrDefault(s => s.Id == Id);
+                serviceType = myDB.ServiceTypes.AsNoTracking().FirstOrDefault(s => s.Id == Id);
 
             }
             catch (Exception ex)

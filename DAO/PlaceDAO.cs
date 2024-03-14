@@ -32,7 +32,7 @@ namespace DAO
             List<Place> places = new List<Place>();
             try
             {
-                places = myDB.Places.Where(p => p.HostId == Id).ToList();
+                places = myDB.Places.AsNoTracking().Where(p => p.HostId == Id).ToList();
             }
             catch (Exception ex)
             {
@@ -45,7 +45,7 @@ namespace DAO
             List<Place> places = new List<Place>();
             try
             {
-                places = await myDB.Places.Where(p => p.HostId.ToString() == Id && p.DeleteFlag == 0)
+                places = await myDB.Places.AsNoTracking().Where(p => p.HostId.ToString() == Id && p.DeleteFlag == 0)
                                           .Include(p => p.Host)
                                           .ToListAsync();
             }
@@ -60,7 +60,7 @@ namespace DAO
             Place places = new Place();
             try
             {
-                places = await myDB.Places.Where(p => p.HostId.ToString() == HostId)
+                places = await myDB.Places.AsNoTracking().Where(p => p.HostId.ToString() == HostId)
                 .Include(p => p.Host).FirstOrDefaultAsync(m => m.Id == placeId);
             }
             catch (Exception ex)
@@ -75,7 +75,7 @@ namespace DAO
             Place places = new Place();
             try
             {
-                places = await myDB.Places.Include(p => p.Host).FirstOrDefaultAsync(m => m.Id == placeId);
+                places = await myDB.Places.AsNoTracking().Include(p => p.Host).FirstOrDefaultAsync(m => m.Id == placeId);
             }
             catch (Exception ex)
             {

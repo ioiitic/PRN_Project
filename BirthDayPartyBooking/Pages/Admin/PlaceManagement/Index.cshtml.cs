@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Microsoft.AspNetCore.Http;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
 {
     public class IndexModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly IPlaceRepository placeRepo;
 
-        public IndexModel(BusinessObject.BirthdayPartyBookingContext context)
+        public IndexModel(IPlaceRepository placeRepo)
         {
-            _context = context;
+            this.placeRepo = placeRepo;
         }
 
         public IList<Place> Place { get;set; }
@@ -25,8 +26,7 @@ namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
         {
             string Id = HttpContext.Session.GetString("UserId");
 
-            Place = await _context.Places.Where(p => p.HostId.ToString() == Id && p.DeleteFlag == 0)
-                .Include(p => p.Host).ToListAsync();
+            Place = await placeRepo.GetAllPlaceByHostID(Id);
         }
     }
 }

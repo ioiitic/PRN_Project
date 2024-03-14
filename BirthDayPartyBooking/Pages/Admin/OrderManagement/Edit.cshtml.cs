@@ -8,16 +8,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.Enum;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
 {
     public class EditModel : PageModel
     {
-        private readonly BirthdayPartyBookingContext _context;
-
-        public EditModel(BirthdayPartyBookingContext context)
+        private readonly IOrderRepository orderRepo;
+        private readonly IOrderDetailRepository orderDetailRepo;
+        public EditModel(IOrderRepository orderRepo, IOrderDetailRepository orderDetailRepo)
         {
-            _context = context;
+            this.orderRepo = orderRepo; 
+            this.orderDetailRepo = orderDetailRepo; 
         }
 
         [BindProperty]
@@ -30,14 +32,9 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
             {
                 return NotFound();
             }
-
-            Order = await _context.Orders
-                .Include(o => o.Guest)
-                .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == id);
-            OrderDetails = _context.OrderDetails
-                .Where(o => o.OrderId == Order.Id)
-                .Include(o => o.Service)
-                .Include(o => o.Service.ServiceType).ToList();
+            Order = await orderRepo.GetOrderByOrderID(id.Value);
+            OrderDetails = await orderDetailRepo.GetOrderDetailByOrderID(Order.Id);
+          
             if (Order == null)
             {
                 return NotFound();
@@ -45,7 +42,6 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
             var statusDictionary = OrderStatus.StatusNames
                 .Select((name, index) => new { Key = index, Value = name })
                 .ToDictionary(item => item.Key, item => item.Value);
-            ViewData["GuestId"] = new SelectList(_context.Accounts, "Id", "Email");
             ViewData["Status"] = new SelectList(statusDictionary, "Key", "Value");
             return Page();
         }
@@ -57,19 +53,16 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
                 return Page();
             }
 
-            Order = await _context.Orders
-                .Include(o => o.Guest)
-                .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == Order.Id);
+            Order = await orderRepo.GetOrderByOrderID(Order.Id);
             Order.Status = 1;
 
             try
             {
-                _context.Orders.Update(Order);
-                await _context.SaveChangesAsync();
+                await orderRepo.Update(Order);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderExists(Order.Id))
+                if (orderRepo.GetOrderByOrderID(Order.Id)==null)
                 {
                     return NotFound();
                 }
@@ -88,19 +81,16 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
                 return Page();
             }
 
-            Order = await _context.Orders
-                .Include(o => o.Guest)
-                .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == Order.Id);
+            Order = await orderRepo.GetOrderByOrderID(Order.Id);
             Order.Status = 2;
 
             try
             {
-                _context.Orders.Update(Order);
-                await _context.SaveChangesAsync();
+                await orderRepo.Update(Order);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderExists(Order.Id))
+                if (orderRepo.GetOrderByOrderID(Order.Id) == null)
                 {
                     return NotFound();
                 }
@@ -119,19 +109,16 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
                 return Page();
             }
 
-            Order = await _context.Orders
-                .Include(o => o.Guest)
-                .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == Order.Id);
+            Order = await orderRepo.GetOrderByOrderID(Order.Id);
             Order.Status = 3;
 
             try
             {
-                _context.Orders.Update(Order);
-                await _context.SaveChangesAsync();
+                await orderRepo.Update(Order);  
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderExists(Order.Id))
+                if (orderRepo.GetOrderByOrderID(Order.Id) == null)
                 {
                     return NotFound();
                 }
@@ -144,9 +131,5 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
             return RedirectToPage(new { id = Order.Id });
         }
 
-        private bool OrderExists(Guid id)
-        {
-            return _context.Orders.Any(e => e.Id == id);
-        }
     }
 }

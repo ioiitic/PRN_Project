@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -21,6 +22,7 @@ namespace BusinessObject
         public int? DeleteFlag { get; set; }
         public DateTime? Date { get; set; }
         public int? Status { get; set; }
+        [Required]
         public DateTime? OrderDate { get; set; }
 
         public virtual Account Guest { get; set; }

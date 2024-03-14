@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Microsoft.AspNetCore.Http;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
 {
     public class IndexModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly IServiceRepository serviceRepo;
 
-        public IndexModel(BusinessObject.BirthdayPartyBookingContext context)
+        public IndexModel(IServiceRepository serviceRepo)
         {
-            _context = context;
+            this.serviceRepo = serviceRepo;
         }
 
         public IList<Service> Service { get;set; }
@@ -25,9 +26,7 @@ namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
         {
             string Id = HttpContext.Session.GetString("UserId");
 
-            Service = await _context.Services.Where(s => s.HostId.ToString() == Id && s.DeleteFlag == 0)
-                .Include(s => s.Host)
-                .Include(s => s.ServiceType).ToListAsync();
+            Service = await serviceRepo.GetAllServicesByHostID(Id);
         }
     }
 }

@@ -13,11 +13,11 @@ namespace Repository.Repo
     {
         public void AddNew(Order order) => OrderDAO.Instance.AddNew(order);
 
-        public bool CheckOrderExist(DateTime orderDate, string hostId, Guid placeID) => OrderDAO.Instance.CheckOrderExist(orderDate, hostId, placeID);
-
         public bool CheckOrderExist(Order order, string Id) => OrderDAO.Instance.CheckOrderExist(order, Id);
 
         public Task<List<Order>> GetAllActiveorders() => OrderDAO.Instance.GetAllActiveorders();
+
+        public Task<List<Order>> GetOrderByCustomerID(string id) => OrderDAO.Instance.GetOrderByCustomerID(id);
 
         public Task<List<Order>> GetOrderByHostID(string id) => OrderDAO.Instance.GetOrderByHostID(id);
 

@@ -8,13 +8,17 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using BusinessObject;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Customer
 {
     public class BookingModel : PageModel
     {
-        private readonly BirthdayPartyBookingContext _context;
-
+        private readonly IAccountRepository accountRepo;
+        private readonly IServiceRepository serviceRepo;
+        private readonly IPlaceRepository placeRepo;
+        private readonly IOrderRepository orderRepo;
+        private readonly IOrderDetailRepository orderDetailRepo;
         [BindProperty]
         public Order Order { get; set; }
         [BindProperty]
@@ -30,9 +34,17 @@ namespace BirthDayPartyBooking.Pages.Customer
         [BindProperty(SupportsGet = true)]
         public string Id { get; set; }
 
-        public BookingModel(BirthdayPartyBookingContext context)
+        public BookingModel(IAccountRepository accountRepo,
+                            IServiceRepository serviceRepo, 
+                            IPlaceRepository placeRepo, 
+                            IOrderRepository orderRepo, 
+                            IOrderDetailRepository orderDetailRepo)
         {
-            _context = context;
+            this.placeRepo = placeRepo;
+            this.accountRepo = accountRepo;
+            this.serviceRepo = serviceRepo;
+            this.orderRepo=orderRepo;
+            this.orderDetailRepo=orderDetailRepo;
         }
 
         public IActionResult OnGet()
@@ -50,15 +62,22 @@ namespace BirthDayPartyBooking.Pages.Customer
 
             string customerId = HttpContext.Session.GetString("UserId");
 
-            Customer = _context.Accounts.FirstOrDefault(c => c.Id.ToString() == customerId);
-            Host = _context.Accounts.FirstOrDefault(c => c.Id.ToString() == Id);
-            ViewData["ServiceId"] = new SelectList(_context.Services.Where(p => p.HostId == Host.Id).OrderBy(s => s.ServiceTypeId).Select(p => new
+            Customer = accountRepo.GetAccountByAccountId(customerId);
+            Host =  accountRepo.GetAccountByAccountId(Id);
+            if (Id != null && serviceRepo != null)
             {
-                p.Id,
-                NameAndPrice = p.ServiceType.Name + " - " + p.Name + " - $" + p.Price.ToString()
-            }), "Id", "NameAndPrice");
-            ViewData["GuestId"] = new SelectList(_context.Accounts, "Id", "Name");
-            ViewData["PlaceId"] = new SelectList(_context.Places.Where(p => p.HostId == Host.Id).Select(p => new
+                var services = serviceRepo.GetValidServices(Host.Id);
+                if (services != null)
+                {
+                    ViewData["ServiceId"] = new SelectList(services.Select(p => new
+                    {
+                        p.Id,
+                        NameAndPrice = p.ServiceType?.Name + " - " + p.Name + " - $" + p.Price?.ToString()
+                    }), "Id", "NameAndPrice");
+                }
+            }
+
+            ViewData["PlaceId"] = new SelectList(placeRepo.GetAllPlace(Host.Id).Select(p => new
             {   
                 p.Id,
                 NameAndAddress = p.Name + ", " + p.Address + " - $" + p.Price
@@ -72,9 +91,9 @@ namespace BirthDayPartyBooking.Pages.Customer
 
             foreach(OrderDetail orderDetail in OrderDetails)
             {
-                orderDetail.Service = _context.Services.FirstOrDefault(s => s.Id == orderDetail.ServiceId);
+                orderDetail.Service = serviceRepo.GetServiceByServiceID(orderDetail.ServiceId.Value);
                 var typeId = orderDetail.Service.ServiceTypeId;
-                orderDetail.Service.ServiceType = _context.ServiceTypes.FirstOrDefault(t => t.Id == typeId);
+                orderDetail.Service.ServiceType = serviceRepo.GetServiceTypeByServiceTypeID(orderDetail.ServiceId.Value);
                 totalPrice += orderDetail.Price.Value;
             }
 
@@ -91,30 +110,42 @@ namespace BirthDayPartyBooking.Pages.Customer
             else
                 Id = HttpContext.Session.GetString("HostId");
 
-            var check = _context.Orders.Any(o => o.Date == Order.Date && o.HostId.ToString() == Id && o.PlaceId == Order.PlaceId);
+            var check = orderRepo.CheckOrderExist(Order, Id);
+           
             if (check)
             {
-                HttpContext.Session.SetString("OrderModelState", "Invalid");
+                TempData["WarningMessage"] = "This place has been booked on this date.";
                 return RedirectToPage();
             }
+            string customerId = HttpContext.Session.GetString("UserId");
+            var orderDetailsJson = HttpContext.Session.GetString("OrderDetails");
+            OrderDetails = (orderDetailsJson != null) ? JsonConvert.DeserializeObject<List<OrderDetail>>(orderDetailsJson)
+                : new List<OrderDetail>();
 
-            Customer = _context.Accounts.FirstOrDefault(c => c.Role == 1);
+            var totalPrice = (Order.Place==null) ? 0 : Order.Place.Price;
+
+            foreach (OrderDetail orderDetail in OrderDetails)
+            {
+                orderDetail.Service = serviceRepo.GetServiceByServiceID(orderDetail.ServiceId.Value);
+                var typeId = orderDetail.Service.ServiceTypeId;
+                orderDetail.Service.ServiceType = serviceRepo.GetServiceTypeByServiceTypeID(orderDetail.ServiceId.Value);
+                totalPrice += orderDetail.Price.Value;
+            }
+        
+            Customer = accountRepo.GetAccountByAccountId(customerId);
             Order.GuestId = Customer.Id;
             Order.OrderDate = DateTime.Now;
             Order.HostId = Guid.Parse(Id);
             Order.Status = 0;
+            Order.TotalPrice = totalPrice;
             Order.DeleteFlag = 0;
-            _context.Orders.Add(Order);
-            _context.SaveChanges();
-            var orderDetailsJson = HttpContext.Session.GetString("OrderDetails");
-            OrderDetails = (orderDetailsJson != null) ? JsonConvert.DeserializeObject<List<OrderDetail>>(orderDetailsJson)
-                : new List<OrderDetail>();
+            orderRepo.AddNew(Order);           
+            
             foreach (OrderDetail orderDetail in OrderDetails)
             {
                 orderDetail.OrderId = Order.Id;
                 orderDetail.Service = null;
-                _context.OrderDetails.Add(orderDetail);
-                _context.SaveChanges();
+                orderDetailRepo.AddNew(orderDetail);
             }
             HttpContext.Session.Remove("OrderDetails");
             return RedirectToPage("./Index");
@@ -122,7 +153,7 @@ namespace BirthDayPartyBooking.Pages.Customer
 
         public IActionResult OnPostFormDetail()
         {
-            OrderDetail.Service = _context.Services.FirstOrDefault(s => s.Id == OrderDetail.ServiceId);
+            OrderDetail.Service = serviceRepo.GetServiceByServiceID(OrderDetail.ServiceId.Value);
             var orderDetailsJson = HttpContext.Session.GetString("OrderDetails");
             OrderDetail.Number = Number;
             OrderDetail.Price = OrderDetail.Service.Price * Number;

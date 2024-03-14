@@ -5,8 +5,9 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-
-    using System;
+using Repository.IRepo;
+using Repository.Repo;
+using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -44,6 +45,12 @@
                     });
             services.AddDbContext<BirthdayPartyBookingContext>();
             services.AddMvc().AddRazorPagesOptions(option => option.Conventions.AddPageRoute("/Login_Register/Login", ""));
+            
+            services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+            services.AddScoped<IPlaceRepository, PlaceRepository>();
+            services.AddScoped<IServiceRepository, ServiceRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

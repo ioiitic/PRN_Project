@@ -45,7 +45,22 @@ namespace DAO
             List<Order> orders;
             try
             {
-                orders = await myDB.Orders.Where(o => o.HostId.ToString() == id)
+                orders = await myDB.Orders.AsNoTracking().Where(o => o.HostId.ToString() == id)
+                                          .Include(o => o.Guest)
+                                          .Include(o => o.Place).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return orders;
+        }
+        public async Task<List<Order>> GetOrderByCustomerID(string id)
+        {
+            List<Order> orders;
+            try
+            {
+                orders = await myDB.Orders.AsNoTracking().Where(o => o.GuestId.ToString() == id)
                                           .Include(o => o.Guest)
                                           .Include(o => o.Place).ToListAsync();
             }
@@ -61,7 +76,7 @@ namespace DAO
             try
             {
                 orders = await myDB.Orders.Include(o => o.Guest)
-                                          .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == id);
+                                          .Include(o => o.Place).AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
             }
             catch (Exception ex)
             {
@@ -69,34 +84,19 @@ namespace DAO
             }
             return orders;
         }
-        public bool CheckOrderExist(DateTime orderDate, string hostId, Guid placeID)
-        {
-            bool check;
-            try
-            {
-                check = myDB.Orders.Any(o => o.Date == orderDate && o.HostId.ToString() == hostId && o.PlaceId == placeID);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-            return check;
-        }
 
         public bool CheckOrderExist(Order order, string Id)
         {
             bool check = false;
             try
             {
-                check = myDB.Orders.Any(o => o.Date == order.Date && o.HostId.ToString() == Id && o.PlaceId == order.PlaceId);
+                check = myDB.Orders.AsNoTracking().Any(o => o.Date == order.Date && o.HostId.ToString() == Id && o.PlaceId == order.PlaceId);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
             return check;
-
-
         }
 
         public void AddNew(Order order)
