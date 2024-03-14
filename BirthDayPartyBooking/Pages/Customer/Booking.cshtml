@@ -178,7 +178,7 @@
                          aria-label="Table navigation">
                         <p class="text-sm">
                             <span class="font-normal text-gray-500 dark:text-gray-400">Total price:</span>
-                            <span class="font-semibold text-gray-900 dark:text-white">@Model.Order.TotalPrice</span>
+                            <span id="totalPrice" class="font-semibold text-gray-900 dark:text-white">$@Model.Order.TotalPrice</span>
                         </p>
                     </nav>
                 </div>
@@ -250,6 +250,7 @@
                 var selectedValue = $('#Order_PlaceId').val();
                 var placePriceText = $('#Order_PlaceId option[value="' + selectedValue + '"]').text().split(' - ')[1];
                 var placePriceNumeric = parseFloat(placePriceText.replace(/[^\d.]/g, ''));
+                console.log("Place Price:" + placePriceNumeric);
                 var totalPrice = parseInt('@Model.Order.TotalPrice'.replace('$', '')) + parseInt(placePriceNumeric);
                 $('#totalPrice').val('$' + totalPrice.toString());
             }
