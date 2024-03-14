@@ -1,0 +1,144 @@
+﻿using BusinessObject;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DAO
+{
+    public class PlaceDAO
+    {
+        BirthdayPartyBookingContext myDB = new BirthdayPartyBookingContext();
+        private static PlaceDAO instance = null;
+        private static readonly object instanceLock = new object();
+        public static PlaceDAO Instance
+        {
+            get
+            {
+                lock (instanceLock)
+                {
+                    if (instance == null)
+                    {
+                        instance = new PlaceDAO();
+                    }
+                    return instance;
+                }
+            }
+        }
+        public List<Place> GetAllPlace(Guid Id)
+        {
+            List<Place> places = new List<Place>();
+            try
+            {
+                places = myDB.Places.Where(p => p.HostId == Id).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return places;
+        }
+        public async Task<List<Place>> GetAllPlaceByHostID(string Id)
+        {
+            List<Place> places = new List<Place>();
+            try
+            {
+                places = await myDB.Places.Where(p => p.HostId.ToString() == Id && p.DeleteFlag == 0)
+                                          .Include(p => p.Host)
+                                          .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return places;
+        }
+        public async Task<Place> GetAllPlaceByHostIDAndPlaceID(string HostId, Guid placeId)
+        {
+            Place places = new Place();
+            try
+            {
+                places = await myDB.Places.Where(p => p.HostId.ToString() == HostId)
+                .Include(p => p.Host).FirstOrDefaultAsync(m => m.Id == placeId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return places;
+        }
+
+        public async Task<Place> GetPlaceByPlaceID(Guid placeId)
+        {
+            Place places = new Place();
+            try
+            {
+                places = await myDB.Places.Include(p => p.Host).FirstOrDefaultAsync(m => m.Id == placeId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return places;
+        }
+
+        public async Task AddNew(Place place)
+        {
+            try
+            {
+                myDB.Places.Add(place);
+                await myDB.SaveChangesAsync();
+                myDB.Entry(place).State = EntityState.Detached;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task Update(Place place)
+        {
+            try
+            {
+                Task<Place> _place =GetPlaceByPlaceID(place.Id);
+                if (_place != null)
+                {
+                    myDB.Entry<Place>(place).State = EntityState.Modified;
+                    await myDB.SaveChangesAsync();
+                    myDB.Entry(place).State = EntityState.Detached;
+                }
+                else
+                {
+                    throw new Exception("The place not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task Remove(Place place)
+        {
+            try
+            {
+                Task<Place> _place = GetPlaceByPlaceID(place.Id);
+                if (_place != null)
+                {
+                    place.DeleteFlag = 1;
+                    myDB.Entry<Place>(place).State = EntityState.Modified;
+                    await myDB.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new Exception("The place not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+    }
+}
