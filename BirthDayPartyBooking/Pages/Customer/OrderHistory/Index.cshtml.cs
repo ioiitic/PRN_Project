@@ -14,19 +14,28 @@ namespace BirthDayPartyBooking.Pages.Customer.OrderHistory
     public class IndexModel : PageModel
     {
         private readonly IOrderRepository orderRepo;
+        private readonly BirthdayPartyBookingContext _context;
 
-        public IndexModel(IOrderRepository orderRepo)
+        public IndexModel(IOrderRepository orderRepo, BirthdayPartyBookingContext context)
         {
             this.orderRepo = orderRepo;
+            _context = context;
         }
 
-        public IList<Order> Order { get;set; }
+        public PaginatedList<Order> Order { get;set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int? pageIndex)
         {
             string Id = HttpContext.Session.GetString("UserId");
 
-            Order = await orderRepo.GetOrderByCustomerID(Id);
+            var pageSize = 4;
+
+            IQueryable<Order> orders = _context.Orders.Where(o => o.GuestId.ToString() == Id);
+            var orderList = await orderRepo.GetOrderByCustomerID(Id);
+
+            var orderQuery = orderList.AsQueryable();
+
+            Order = await PaginatedList<Order>.CreateAsync(orders.AsNoTracking(), pageIndex ?? 1, pageSize);
         }
     }
 }

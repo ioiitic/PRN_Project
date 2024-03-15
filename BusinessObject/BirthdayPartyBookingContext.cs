@@ -28,7 +28,7 @@ namespace BusinessObject
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("server=(local);database=BirthdayPartyBooking;uid=sa;password=12345;");
+                optionsBuilder.UseSqlServer("server=.\\SQLExpress;;database=BirthdayPartyBooking;uid=sa;password=12345;");
             }
         }
 

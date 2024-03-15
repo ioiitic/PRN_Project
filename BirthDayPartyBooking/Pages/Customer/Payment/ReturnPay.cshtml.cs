@@ -37,7 +37,7 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
                 }
             }
 
-            string orderId = Convert.ToInt64(vnp_TxnRef).ToString().Substring(0, 36);
+            string orderId = vnp_TxnRef.Substring(0, 36);
             long vnpayTranId = Convert.ToInt64(vnp_TransactionNo);
             //String TerminalID = "SF27X1PR";
             string bankCode = vnpay.GetResponseData("vnp_BankCode");
@@ -65,7 +65,7 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
                 //log.InfoFormat("Invalid signature, InputData={0}", Request.RawUrl);
                 //displayMsg.InnerText = "Co loi xay ra trong quá trinh xu ly";
             }
-            return RedirectToPage("/Customer/OrderHistory/Detils", new {id = orderId});
+            return RedirectToPage("/Customer/OrderHistory/Details", new {id = orderId});
         }
     }
 }

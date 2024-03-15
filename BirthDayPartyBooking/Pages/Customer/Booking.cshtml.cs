@@ -50,11 +50,6 @@ namespace BirthDayPartyBooking.Pages.Customer
         public IActionResult OnGet()
         {
             Order = new Order();
-            if (HttpContext.Session.GetString("OrderModelState") != null)
-            {
-                ModelState.AddModelError("Order", "Invalid!"); 
-                HttpContext.Session.Remove("OrderModelState");
-            }
             if (Id != null)
                 HttpContext.Session.SetString("HostId", Id);
             else 
@@ -87,7 +82,7 @@ namespace BirthDayPartyBooking.Pages.Customer
             OrderDetails = (orderDetailsJson != null) ? JsonConvert.DeserializeObject<List<OrderDetail>>(orderDetailsJson)
                 : new List<OrderDetail>();
 
-            var totalPrice = (Order.Place==null)?0:Order.Place.Price;
+            var totalPrice = (Order.PlaceId==null)?0:(placeRepo.GetAllPlace(Host.Id).FirstOrDefault(p => p.Id == Order.Id)).Price;
 
             foreach(OrderDetail orderDetail in OrderDetails)
             {
@@ -122,7 +117,8 @@ namespace BirthDayPartyBooking.Pages.Customer
             OrderDetails = (orderDetailsJson != null) ? JsonConvert.DeserializeObject<List<OrderDetail>>(orderDetailsJson)
                 : new List<OrderDetail>();
 
-            var totalPrice = (Order.Place==null) ? 0 : Order.Place.Price;
+            var placePrice = placeRepo.GetAllPlace(Guid.Parse(Id)).FirstOrDefault(p => p.Id == Order.PlaceId);
+            var totalPrice = (Order.PlaceId == null) ? 0 : placePrice.Price;
 
             foreach (OrderDetail orderDetail in OrderDetails)
             {
@@ -164,8 +160,12 @@ namespace BirthDayPartyBooking.Pages.Customer
 
             if (orderDetailToUpdate != null)
             {
-                orderDetailToUpdate.Number += OrderDetail.Number;
-                orderDetailToUpdate.Price = OrderDetail.Service.Price * orderDetailToUpdate.Number;
+                var serviceType = serviceRepo.GetServiceTypeByServiceTypeID(OrderDetail.Service.ServiceTypeId.Value);
+                if (serviceType.Name == "Dish")
+                {
+                    orderDetailToUpdate.Number += OrderDetail.Number;
+                    orderDetailToUpdate.Price = OrderDetail.Service.Price * orderDetailToUpdate.Number;
+                } 
             }
             else
                 OrderDetails.Add(OrderDetail);

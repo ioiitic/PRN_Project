@@ -36,10 +36,6 @@ namespace BirthDayPartyBooking.Pages.Customer.OrderHistory
             Order = await orderRepo.GetOrderByOrderID(id.Value);
             OrderDetails =await orderDetailRepo.GetOrderDetailByOrderID(Order.Id);
 
-            if (Order == null)
-            {
-                return NotFound();
-            }
             return Page();
         }
 

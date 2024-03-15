@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
+using Microsoft.AspNetCore.Http;
 
-namespace BirthDayPartyBooking.Pages.Customer
+namespace BirthDayPartyBooking.Pages.Customer.Accounts
 {
     public class EditModel : PageModel
     {
@@ -20,25 +21,15 @@ namespace BirthDayPartyBooking.Pages.Customer
         }
 
         [BindProperty]
-        public Order Order { get; set; }
+        public Account Account { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(Guid? id)
+        public async Task<IActionResult> OnGetAsync()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            Order = await _context.Orders
-                .Include(o => o.Guest)
-                .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == id);
+            string id = HttpContext.Session.GetString("UserId");
 
-            if (Order == null)
-            {
-                return NotFound();
-            }
-           ViewData["GuestId"] = new SelectList(_context.Accounts, "Id", "Id");
-           ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Id");
+            Account = await _context.Accounts.FirstOrDefaultAsync(m => m.Id.ToString() == id);
+
             return Page();
         }
 
@@ -51,7 +42,7 @@ namespace BirthDayPartyBooking.Pages.Customer
                 return Page();
             }
 
-            _context.Attach(Order).State = EntityState.Modified;
+            _context.Attach(Account).State = EntityState.Modified;
 
             try
             {
@@ -59,7 +50,7 @@ namespace BirthDayPartyBooking.Pages.Customer
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderExists(Order.Id))
+                if (!AccountExists(Account.Id))
                 {
                     return NotFound();
                 }
@@ -72,9 +63,9 @@ namespace BirthDayPartyBooking.Pages.Customer
             return RedirectToPage("./Index");
         }
 
-        private bool OrderExists(Guid id)
+        private bool AccountExists(Guid id)
         {
-            return _context.Orders.Any(e => e.Id == id);
+            return _context.Accounts.Any(e => e.Id == id);
         }
     }
 }

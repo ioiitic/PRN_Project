@@ -48,10 +48,6 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
             
         public async Task<IActionResult> OnPostAccept()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
 
             Order = await orderRepo.GetOrderByOrderID(Order.Id);
             Order.Status = 1;
@@ -76,10 +72,6 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
         }
         public async Task<IActionResult> OnPostReject()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
 
             Order = await orderRepo.GetOrderByOrderID(Order.Id);
             Order.Status = 2;
@@ -104,11 +96,6 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
         }
         public async Task<IActionResult> OnPostClose()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
             Order = await orderRepo.GetOrderByOrderID(Order.Id);
             Order.Status = 3;
 
