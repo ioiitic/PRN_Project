@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -16,6 +17,8 @@ namespace BusinessObject
         public string Name { get; set; }
         public string Description { get; set; }
         public string Address { get; set; }
+        [Required]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Invalid price")]
         public int? Price { get; set; }
         public Guid? HostId { get; set; }
         public int? DeleteFlag { get; set; }

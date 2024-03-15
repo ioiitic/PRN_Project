@@ -35,6 +35,7 @@ namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
         {
             if (!ModelState.IsValid)
             {
+                ViewData["ServiceTypeId"] = new SelectList(serviceRepo.GetAllServiceTypes(), "Id", "Name");
                 return Page();
             }
             Service.HostId = Guid.Parse(HttpContext.Session.GetString("UserId"));

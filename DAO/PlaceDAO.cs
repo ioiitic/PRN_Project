@@ -61,7 +61,7 @@ namespace DAO
             try
             {
                 places = await myDB.Places.AsNoTracking().Where(p => p.HostId.ToString() == HostId)
-                .Include(p => p.Host).FirstOrDefaultAsync(m => m.Id == placeId);
+                                                         .Include(p => p.Host).FirstOrDefaultAsync(m => m.Id == placeId);
             }
             catch (Exception ex)
             {

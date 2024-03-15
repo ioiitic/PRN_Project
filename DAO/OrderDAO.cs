@@ -75,8 +75,8 @@ namespace DAO
             Order orders;
             try
             {
-                orders = await myDB.Orders.Include(o => o.Guest)
-                                          .Include(o => o.Place).AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
+                orders = await myDB.Orders.AsNoTracking().Include(o => o.Guest)
+                                          .Include(o => o.Place).FirstOrDefaultAsync(m => m.Id == id);
             }
             catch (Exception ex)
             {
