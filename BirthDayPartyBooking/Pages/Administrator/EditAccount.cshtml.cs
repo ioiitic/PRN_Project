@@ -7,15 +7,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
-using Microsoft.AspNetCore.Http;
 
-namespace BirthDayPartyBooking.Pages.Customer.Accounts
+namespace BirthDayPartyBooking.Pages.Administrator
 {
-    public class EditModel : PageModel
+    public class EditAccountModel : PageModel
     {
         private readonly BusinessObject.BirthdayPartyBookingContext _context;
 
-        public EditModel(BusinessObject.BirthdayPartyBookingContext context)
+        public EditAccountModel(BusinessObject.BirthdayPartyBookingContext context)
         {
             _context = context;
         }
@@ -23,13 +22,19 @@ namespace BirthDayPartyBooking.Pages.Customer.Accounts
         [BindProperty]
         public Account Account { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(Guid? id)
         {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-            string id = HttpContext.Session.GetString("UserId");
+            Account = await _context.Accounts.FirstOrDefaultAsync(m => m.Id == id);
 
-            Account = await _context.Accounts.FirstOrDefaultAsync(m => m.Id.ToString() == id);
-
+            if (Account == null)
+            {
+                return NotFound();
+            }
             return Page();
         }
 
@@ -60,7 +65,7 @@ namespace BirthDayPartyBooking.Pages.Customer.Accounts
                 }
             }
 
-            return RedirectToPage("./");
+            return RedirectToPage("./Index");
         }
 
         private bool AccountExists(Guid id)
