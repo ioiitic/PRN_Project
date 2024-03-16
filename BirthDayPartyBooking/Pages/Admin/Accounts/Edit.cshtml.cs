@@ -63,7 +63,7 @@ namespace BirthDayPartyBooking.Pages.Admin.Accounts
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("/Admin/Accounts/Edit");
         }
 
         private bool AccountExists(Guid id)
