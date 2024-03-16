@@ -113,7 +113,7 @@ namespace BirthDayPartyBooking.Pages.Customer
                 return RedirectToPage();
             }
             string customerId = HttpContext.Session.GetString("UserId");
-            var orderDetailsJson = HttpContext.Session.GetString("OrderDetails");
+            var orderDetailsJson = HttpContext.Session.GetString("OrderDetails"+Id);
             OrderDetails = (orderDetailsJson != null) ? JsonConvert.DeserializeObject<List<OrderDetail>>(orderDetailsJson)
                 : new List<OrderDetail>();
 
@@ -143,7 +143,7 @@ namespace BirthDayPartyBooking.Pages.Customer
                 orderDetail.Service = null;
                 orderDetailRepo.AddNew(orderDetail);
             }
-            HttpContext.Session.Remove("OrderDetails");
+            HttpContext.Session.Remove("OrderDetails"+Id);
             return RedirectToPage("./Index");
         }
 
@@ -180,13 +180,13 @@ namespace BirthDayPartyBooking.Pages.Customer
 
         public IActionResult OnPostClearDetail()
         {
-            HttpContext.Session.Remove("OrderDetails");
+            HttpContext.Session.Remove("OrderDetails"+Id);
             return RedirectToPage("/Customer/Booking");
         }
 
         public IActionResult OnPostBack()
         {
-            HttpContext.Session.Remove("OrderDetails");
+            HttpContext.Session.Remove("OrderDetails"+Id);
             return RedirectToPage("/Customer/Index");
         }
     }
