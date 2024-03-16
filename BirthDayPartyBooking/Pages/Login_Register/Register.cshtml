@@ -66,9 +66,9 @@
                     </div>
                     @if (TempData["WarningMessage"] != null)
                     {
-                        <div class="alert alert-warning">
+                        <span class="text-xs text-red-400">
                             @TempData["WarningMessage"]
-                        </div>
+                        </span>
                     }
                     <div>
                         <label asp-for="Account.Password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
