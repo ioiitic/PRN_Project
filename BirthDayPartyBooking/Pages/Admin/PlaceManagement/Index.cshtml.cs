@@ -8,25 +8,37 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Microsoft.AspNetCore.Http;
 using Repository.IRepo;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
 {
+    [Authorize(Roles = "Host")]
     public class IndexModel : PageModel
     {
-        private readonly IPlaceRepository placeRepo;
+        private readonly IPlaceRepository _placeRepo;
+        private readonly BirthdayPartyBookingContext _context;
+        private readonly IConfiguration _configuration;
 
-        public IndexModel(IPlaceRepository placeRepo)
+        public IndexModel(IPlaceRepository placeRepo, BirthdayPartyBookingContext context, IConfiguration configuration)
         {
-            this.placeRepo = placeRepo;
+            _placeRepo = placeRepo;
+            _context = context;
+            _configuration = configuration;
         }
 
-        public IList<Place> Place { get;set; }
+        public PaginatedList<Place> Place { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int? pageIndex)
         {
             string Id = HttpContext.Session.GetString("UserId");
 
-            Place = await placeRepo.GetAllPlaceByHostID(Id);
+            var pageSize = _configuration.GetValue("PageSize", 4);
+
+            IQueryable<Place> places = _context.Places.Where(o => o.HostId.ToString() == Id);
+
+            Place = await PaginatedList<Place>.CreateAsync(places.AsNoTracking(), pageIndex ?? 1, pageSize);
         }
     }
 }

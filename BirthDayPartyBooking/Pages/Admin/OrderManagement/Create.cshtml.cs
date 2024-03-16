@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using BusinessObject;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
 {
+    [Authorize(Roles = "Host")]
     public class CreateModel : PageModel
     {
         private readonly BusinessObject.BirthdayPartyBookingContext _context;

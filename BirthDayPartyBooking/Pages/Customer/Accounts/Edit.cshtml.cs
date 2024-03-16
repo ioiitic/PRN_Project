@@ -8,9 +8,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace BirthDayPartyBooking.Pages.Customer.Accounts
 {
+    [Authorize(Roles = "Customer")]
     public class EditModel : PageModel
     {
         private readonly BusinessObject.BirthdayPartyBookingContext _context;

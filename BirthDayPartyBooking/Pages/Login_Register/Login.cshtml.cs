@@ -26,6 +26,7 @@ namespace BirthDayPartyBooking.Pages.Login_Register
         [BindProperty]
         [Required]
         public string Password { get; set; }
+        public string LoginStatus { get; set; }
 
 
         public IActionResult OnGet()
@@ -58,7 +59,7 @@ namespace BirthDayPartyBooking.Pages.Login_Register
                 }
             } else
             {
-                ModelState.AddModelError("Password", "Invalid login attempt.");
+                ModelState.AddModelError("LoginStatus", "Wrong Email or Password");
                 return Page();
             }
 

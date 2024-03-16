@@ -78,7 +78,7 @@ namespace BirthDayPartyBooking.Pages.Customer
                 NameAndAddress = p.Name + ", " + p.Address + " - $" + p.Price
             }), "Id", "NameAndAddress");
 
-            var orderDetailsJson = HttpContext.Session.GetString("OrderDetails");
+            var orderDetailsJson = HttpContext.Session.GetString("OrderDetails"+Id);
             OrderDetails = (orderDetailsJson != null) ? JsonConvert.DeserializeObject<List<OrderDetail>>(orderDetailsJson)
                 : new List<OrderDetail>();
 
@@ -149,8 +149,12 @@ namespace BirthDayPartyBooking.Pages.Customer
 
         public IActionResult OnPostFormDetail()
         {
+            if (Id != null)
+                HttpContext.Session.SetString("HostId", Id);
+            else
+                Id = HttpContext.Session.GetString("HostId");
             OrderDetail.Service = serviceRepo.GetServiceByServiceID(OrderDetail.ServiceId.Value);
-            var orderDetailsJson = HttpContext.Session.GetString("OrderDetails");
+            var orderDetailsJson = HttpContext.Session.GetString("OrderDetails"+Id);
             OrderDetail.Number = Number;
             OrderDetail.Price = OrderDetail.Service.Price * Number;
             OrderDetails = (orderDetailsJson != null) ? JsonConvert.DeserializeObject<List<OrderDetail>>(orderDetailsJson)
@@ -170,7 +174,7 @@ namespace BirthDayPartyBooking.Pages.Customer
             else
                 OrderDetails.Add(OrderDetail);
 
-            HttpContext.Session.SetString("OrderDetails", JsonConvert.SerializeObject(OrderDetails));
+            HttpContext.Session.SetString("OrderDetails"+Id, JsonConvert.SerializeObject(OrderDetails));
             return RedirectToPage();
         }
 

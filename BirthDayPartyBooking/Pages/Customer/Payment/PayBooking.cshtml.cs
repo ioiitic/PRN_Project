@@ -1,12 +1,15 @@
 using BusinessObject;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace BirthDayPartyBooking.Pages.Customer.Payment
 {
+    [Authorize(Roles = "Customer")]
     public class PayBookingModel : PageModel
     {
         private readonly BirthdayPartyBookingContext _context;

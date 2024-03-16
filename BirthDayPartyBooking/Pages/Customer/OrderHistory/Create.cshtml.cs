@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using BusinessObject;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace BirthDayPartyBooking.Pages.Customer.OrderHistory
 {
+    [Authorize(Roles = "Customer")]
     public class CreateModel : PageModel
     {
         private readonly BusinessObject.BirthdayPartyBookingContext _context;

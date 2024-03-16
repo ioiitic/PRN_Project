@@ -1,15 +1,18 @@
 using BusinessObject;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Protocols;
 using Repository.IRepo;
 using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace BirthDayPartyBooking.Pages.Customer.Payment
 {
+    [Authorize(Roles = "Customer")]
     public class ReturnPayModel : PageModel
     {
         private readonly IOrderRepository orderRepo;

@@ -9,9 +9,12 @@ using BusinessObject;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Repository.IRepo;
+using Microsoft.AspNetCore.Authorization;
+using BusinessObject.Enum;
 
 namespace BirthDayPartyBooking.Pages.Customer
 {
+    [Authorize(Roles = "Customer")]
     public class IndexModel : PageModel
     {
         private readonly IAccountRepository accountRepo;

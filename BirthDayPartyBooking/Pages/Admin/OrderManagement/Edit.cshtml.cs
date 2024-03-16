@@ -9,9 +9,12 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.Enum;
 using Repository.IRepo;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
 {
+    [Authorize(Roles = "Host")]
     public class EditModel : PageModel
     {
         private readonly IOrderRepository orderRepo;

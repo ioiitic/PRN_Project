@@ -8,9 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Microsoft.AspNetCore.Http;
 using Repository.IRepo;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
 {
+    [Authorize(Roles = "Host")]
     public class DetailsModel : PageModel
     {
         private readonly IPlaceRepository placeRepo;

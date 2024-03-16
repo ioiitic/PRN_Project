@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace BirthDayPartyBooking.Pages.Customer.OrderHistory
 {
+    [Authorize(Roles = "Customer")]
     public class DeleteModel : PageModel
     {
         private readonly BusinessObject.BirthdayPartyBookingContext _context;

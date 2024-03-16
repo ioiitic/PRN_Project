@@ -8,9 +8,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using BusinessObject;
 using Microsoft.AspNetCore.Http;
 using Repository.IRepo;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
 {
+    [Authorize(Roles = "Host")]
     public class CreateModel : PageModel
     {
         private readonly IServiceRepository serviceRepo;

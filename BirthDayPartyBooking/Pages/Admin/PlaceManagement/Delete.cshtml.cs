@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Repository.IRepo;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
 {
+    [Authorize(Roles = "Host")]
     public class DeleteModel : PageModel
     {
         private readonly IPlaceRepository placeRepo;
