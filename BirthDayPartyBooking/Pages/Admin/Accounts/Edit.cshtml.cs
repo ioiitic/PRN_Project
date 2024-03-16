@@ -7,9 +7,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using BusinessObject.Enum;
 
 namespace BirthDayPartyBooking.Pages.Admin.Accounts
 {
+    [Authorize(Roles = "Host")]
     public class EditModel : PageModel
     {
         private readonly BusinessObject.BirthdayPartyBookingContext _context;
@@ -22,19 +26,13 @@ namespace BirthDayPartyBooking.Pages.Admin.Accounts
         [BindProperty]
         public Account Account { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(Guid? id)
+        public async Task<IActionResult> OnGetAsync()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            Account = await _context.Accounts.FirstOrDefaultAsync(m => m.Id == id);
+            string id = HttpContext.Session.GetString("UserId");
 
-            if (Account == null)
-            {
-                return NotFound();
-            }
+            Account = await _context.Accounts.FirstOrDefaultAsync(m => m.Id.ToString() == id);
+
             return Page();
         }
 
@@ -65,7 +63,7 @@ namespace BirthDayPartyBooking.Pages.Admin.Accounts
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("/Admin/Accounts/Edit");
         }
 
         private bool AccountExists(Guid id)

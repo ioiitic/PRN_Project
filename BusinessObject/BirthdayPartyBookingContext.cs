@@ -1,6 +1,10 @@
 ﻿using System;
+using System.IO;
+using BusinessObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
+
 
 #nullable disable
 
@@ -26,12 +30,14 @@ namespace BusinessObject
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server=.\\SQLExpress;database=BirthdayPartyBooking;uid=sa;password=12345;");
-            }
+            var builder = new ConfigurationBuilder()
+                        .SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            IConfigurationRoot configuration = builder.Build();
+            string test = configuration.GetConnectionString("MyDB");
+            optionsBuilder.UseSqlServer(configuration.GetConnectionString("MyDB"));
         }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -75,17 +81,29 @@ namespace BusinessObject
                     .HasColumnName("ID")
                     .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.Date).HasColumnName("DATE");
+                entity.Property(e => e.Date)
+                    .HasColumnType("date")
+                    .HasColumnName("DATE");
 
                 entity.Property(e => e.DeleteFlag).HasColumnName("DELETE_FLAG");
 
                 entity.Property(e => e.GuestId).HasColumnName("GUEST_ID");
 
+                entity.Property(e => e.HostId).HasColumnName("HOST_ID");
+
                 entity.Property(e => e.Note)
                     .HasMaxLength(300)
                     .HasColumnName("NOTE");
 
+                entity.Property(e => e.OrderDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("ORDER_DATE");
+
                 entity.Property(e => e.PlaceId).HasColumnName("PLACE_ID");
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(100)
+                    .HasColumnName("STATUS");
 
                 entity.Property(e => e.TotalPrice).HasColumnName("TOTAL_PRICE");
 
@@ -130,8 +148,8 @@ namespace BusinessObject
                 entity.ToTable("PLACE");
 
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ID");
+                    .HasColumnName("ID")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.Address)
                     .HasMaxLength(1000)
