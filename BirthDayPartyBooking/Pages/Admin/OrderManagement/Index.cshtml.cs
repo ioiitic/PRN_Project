@@ -18,13 +18,11 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
     public class IndexModel : PageModel
     {
         private readonly IOrderRepository _orderRepo;
-        private readonly BirthdayPartyBookingContext _context;
         private readonly IConfiguration _configuration;
 
-        public IndexModel(IOrderRepository orderRepo, BirthdayPartyBookingContext context, IConfiguration configuration)
+        public IndexModel(IOrderRepository orderRepo, IConfiguration configuration)
         {
             _orderRepo = orderRepo;
-            _context = context;
             _configuration = configuration;
         }
 
@@ -36,7 +34,7 @@ namespace BirthDayPartyBooking.Pages.Admin.OrderManagement
 
             var pageSize = _configuration.GetValue("PageSize", 4);
 
-            IQueryable<Order> orders = _context.Orders.Where(o => o.HostId.ToString() == Id);
+            IQueryable<Order> orders = _orderRepo.GetOrderByHostID(Id);
 
             Order = await PaginatedList<Order>.CreateAsync(orders.AsNoTracking(), pageIndex ?? 1, pageSize);
         }

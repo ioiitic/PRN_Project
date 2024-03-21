@@ -42,21 +42,20 @@ namespace DAO
             return services;
         }
 
-        public async Task<List<Service>> GetAllServicesByHostID(string Id)
+        public IQueryable<Service> GetAllServicesByHostID(string Id)
         {
-            List<Service> services = new List<Service>();
             try
             {
-                services = await myDB.Services.AsNoTracking().Where(s => s.HostId.ToString() == Id && s.DeleteFlag == 0)
-                .Include(s => s.Host)
-                .Include(s => s.ServiceType).ToListAsync();
+                var services = myDB.Services.AsNoTracking().Where(s => s.HostId.ToString() == Id && s.DeleteFlag == 0)
+                                                           .Include(s => s.Host)
+                                                           .Include(s => s.ServiceType);
+                return services;
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
 
-            return services;
         }
 
         public List<Service> GetAllServices()

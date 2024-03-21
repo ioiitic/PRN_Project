@@ -4,48 +4,7 @@
 @{
     ViewData["Title"] = "Index";
 }
-@* <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Service[0].Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Service[0].Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Service[0].Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Service[0].ServiceType)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Service) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ServiceType.Name)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table> *@
+
 <section class="bg-white dark:bg-gray-900 p-3 sm:p-5">
     <h2 class="mb-4 text-2xl font-bold text-gray-900 dark:text-white">Service Management</h2>
     <div class="mx-auto max-w-screen-xl px-4 lg:px-12">

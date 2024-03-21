@@ -10,10 +10,12 @@ namespace Repository.IRepo
     public interface IAccountRepository
     {
         Task<List<Account>> GetAllActiveAccounts();
+        Task<List<Account>> GetAllAccounts();
         Task<List<Account>> GetAllActiveHosts();
         Account GetAccountByAccountId(string id);
         Account CheckLogin(string Email, string Password);
         bool CheckEmailExist(string email);
         void AddNew(Account account);
+        Task Update(Account account);
     }
 }

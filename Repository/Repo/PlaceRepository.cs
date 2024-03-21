@@ -13,9 +13,9 @@ namespace Repository.Repo
     {
         public Task AddNew(Place place) => PlaceDAO.Instance.AddNew(place); 
 
-        public List<Place> GetAllPlace(Guid Id) => PlaceDAO.Instance.GetAllPlace(Id);
+        public IQueryable<Place> GetAllPlace(string Id) => PlaceDAO.Instance.GetAllPlace(Id);
 
-        public Task<List<Place>> GetAllPlaceByHostID(string Id) => PlaceDAO.Instance.GetAllPlaceByHostID(Id);
+        public List<Place> GetAllPlaceByHostID(Guid Id) => PlaceDAO.Instance.GetAllPlaceByHostID(Id);
 
         public Task<Place> GetAllPlaceByHostIDAndPlaceID(string HostId, Guid placeId) => PlaceDAO.Instance.GetAllPlaceByHostIDAndPlaceID(HostId, placeId);
 

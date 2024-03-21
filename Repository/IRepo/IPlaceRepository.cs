@@ -9,8 +9,8 @@ namespace Repository.IRepo
 {
     public interface IPlaceRepository
     {
-        List<Place> GetAllPlace(Guid Id);
-        Task<List<Place>> GetAllPlaceByHostID(string Id);
+        IQueryable<Place> GetAllPlace(string Id);
+        List<Place> GetAllPlaceByHostID(Guid Id);
         Task<Place> GetAllPlaceByHostIDAndPlaceID(string HostId, Guid placeId);
         Task<Place> GetPlaceByPlaceID(Guid placeId);
         Task AddNew(Place place);

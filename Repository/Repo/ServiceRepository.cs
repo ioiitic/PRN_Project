@@ -15,7 +15,7 @@ namespace Repository.Repo
 
         public List<Service> GetAllServices() => ServiceDAO.Instance.GetAllServices();
 
-        public Task<List<Service>> GetAllServicesByHostID(string Id) => ServiceDAO.Instance.GetAllServicesByHostID(Id);
+        public IQueryable<Service> GetAllServicesByHostID(string Id) => ServiceDAO.Instance.GetAllServicesByHostID(Id);
 
         public List<ServiceType> GetAllServiceTypes() => ServiceDAO.Instance.GetAllServiceTypes();
 

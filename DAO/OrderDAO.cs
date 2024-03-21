@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using BusinessObject.ReportData;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -40,14 +41,13 @@ namespace DAO
             }
             return orders;
         }
-        public async Task<List<Order>> GetOrderByHostID(string id)
+
+        public async Task<List<Order>> GetOrderForReport()
         {
             List<Order> orders;
             try
             {
-                orders = await myDB.Orders.AsNoTracking().Where(o => o.HostId.ToString() == id)
-                                          .Include(o => o.Guest)
-                                          .Include(o => o.Place).ToListAsync();
+                orders = await myDB.Orders.AsNoTracking().Include(s => s.Host).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -55,21 +55,78 @@ namespace DAO
             }
             return orders;
         }
-
-        public async Task<List<Order>> GetOrderByCustomerID(string id)
+        public async Task<List<Order>> GetOrderByDate(DateTime startDate, DateTime endDate)
         {
             List<Order> orders;
             try
             {
-                orders = await myDB.Orders.AsNoTracking().Where(o => o.GuestId.ToString() == id)
-                                          .Include(o => o.Guest)
-                                          .Include(o => o.Place).ToListAsync();
+                orders = await myDB.Orders.AsNoTracking().Where(s=> s.Date >= startDate && s.Date <= endDate).Include(s => s.Host).OrderByDescending(s => s.Status).ToListAsync();
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
             return orders;
+        }
+        public IQueryable<Order> GetOrderByHostID(string id)
+        {
+            try
+            {
+                var orders = myDB.Orders.AsNoTracking().Where(o => o.HostId.ToString() == id)
+                                               .Include(o => o.Guest)
+                                               .Include(o => o.Place);
+                return orders;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<HostOrderSummary>> GetHostOrderSummaries()
+        {
+            var hostOrderSummaries = await myDB.Orders
+                .Where(o => o.Status != 5 && o.Status !=2) 
+                .GroupBy(o => o.Host.Name)
+                .Select(g => new HostOrderSummary
+                {
+                    HostName = g.Key,
+                    NumberOrder = g.Count(),
+                    TotalOrderMoney = g.Sum(o => o.TotalPrice)
+                })
+                .ToListAsync();
+
+            return hostOrderSummaries;
+        }
+
+        public async Task<List<HostOrderSummary>> GetHostOrderSummariesByDate(DateTime startDate, DateTime endDate)
+        {
+            var hostOrderSummaries = await myDB.Orders
+                .Where(o => o.Status != 5 && o.Status !=2 & o.Date >= startDate & o.Date <= endDate)
+                .GroupBy(o => o.Host.Name)
+                .Select(g => new HostOrderSummary
+                {
+                    HostName = g.Key,
+                    NumberOrder = g.Count(),
+                    TotalOrderMoney = g.Sum(o => o.TotalPrice)
+                })
+                .ToListAsync();
+
+            return hostOrderSummaries;
+        }
+
+        public IQueryable<Order> GetOrderByCustomerID(string id)
+        {
+            try
+            {
+                var orders = myDB.Orders.AsNoTracking().Where(o => o.GuestId.ToString() == id);
+                                               
+                return orders;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
         public async Task<Order> GetOrderByOrderID(Guid id)
         {
@@ -86,12 +143,12 @@ namespace DAO
             return orders;
         }
 
-        public bool CheckOrderExist(Order order, string Id)
+        public bool CheckOrderExist(Order order)
         {
             bool check = false;
             try
             {
-                check = myDB.Orders.AsNoTracking().Any(o => o.Date == order.Date && o.HostId.ToString() == Id && o.PlaceId == order.PlaceId);
+                check = myDB.Orders.AsNoTracking().Any(o => o.Date == order.Date && o.PlaceId == order.PlaceId && o.Status != 6 && o.Status != 2);
             }
             catch (Exception ex)
             {

@@ -4,61 +4,6 @@
 @{
     ViewData["Title"] = "ManageAccount";
 }
-@* <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Account[0].Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Account[0].Password)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Account[0].Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Account[0].Phone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Account[0].Role)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Account[0].DeleteFlag)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Account) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Role)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeleteFlag)
-            </td>
-            <td>
-                <a asp-page="./EditAccount" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table> *@
-
 <section class="bg-white dark:bg-gray-900 p-3 sm:p-5">
     <h2 class="mb-4 text-2xl font-bold text-gray-900 dark:text-white">Account Management</h2>
     <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
@@ -88,10 +33,8 @@
                             <th scope="col" class="px-4 py-3">  @Html.DisplayNameFor(model => model.Account[0].Password)</th>
                             <th scope="col" class="px-4 py-3">   @Html.DisplayNameFor(model => model.Account[0].Name)</th>
                             <th scope="col" class="px-4 py-3">  @Html.DisplayNameFor(model => model.Account[0].Phone)</th>
+                            <th scope="col" class="px-4 py-3">  Role </th>
                             <th scope="col" class="px-4 py-3">  Status</th>
-                            <th scope="col" class="px-4 py-3">
-                                <span class="sr-only">Actions</span>
-                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -104,33 +47,24 @@
                                 <td class="px-4 py-3"> @Html.DisplayFor(modelItem => item.Phone)</td>
                                 <td class="px-4 py-3">
                                     @{
-                                        string statusString = (item.DeleteFlag == 1) ? "Disable" : "Enable" ;
+                                        string roleString = (item.Role == 1) ? "Customer" : "Host";
                                     }
-                                    @Html.DisplayFor(modelItem => statusString)
+                                    @Html.DisplayFor(modelItem => roleString)
                                 </td>
-                                <td class="px-4 py-3 flex items-center justify-end">
-                                    <button id="dropdown-button-@item.Id" data-dropdown-toggle="dropdown-@item.Id" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
-                                        <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                        </svg>
-                                    </button>
-                                    <div id="dropdown-@item.Id" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
-                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button-@item.Id">
-                                            <li>
-                                                <a class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" asp-page="./EditAccount" asp-route-id="@item.Id"> Edit </a>
-                                            </li>
-                                            <li>
-                                                <a class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" asp-page="./Details" asp-route-id="@item.Id"> Details </a>
-                                            </li>
-                                        </ul>
-                                        <div class="py-1">
-                                            <a class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white" asp-page="./Delete" asp-route-id="@item.Id"> Delete</a>
-                                        </div>
-                                    </div>
+                                <td class="px-4 py-3">
+                                    @{
+                                        string statusString = (item.DeleteFlag == 1) ? "Disable" : "Enable";
+                                        string buttonColor = (item.DeleteFlag == 1) ? "btn-danger" : "btn-success";
+                                    }
+                                    <form method="post" onsubmit="return confirm('Are you sure you want to change the status?')">
+                                        <input type="hidden" asp-for="@item.Id" name="ItemId" />
+                                        <button class="@buttonColor" type="submit" style="padding: 10px 20px;"> @statusString </button>
+                                    </form>
                                 </td>
                             </tr>
                         }
                     </tbody>
+
                 </table>
             </div>
             <nav class="flex flex-col md:flex-row justify-end items-start md:items-center space-y-3 md:space-y-0 p-4" aria-label="Table navigation">
@@ -171,3 +105,44 @@
         </div>
     </div>
 </section>
+<style>
+    .btn {
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 1rem;
+        user-select: none;
+        border: 1px solid transparent;
+        text-decoration: none;
+    }
+
+    .btn-danger {
+        color: #fff;
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+        .btn-danger:hover {
+            color: #fff;
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+    .btn-success {
+        color: #fff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+        .btn-success:hover {
+            color: #fff;
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+</style>

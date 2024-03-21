@@ -5,53 +5,6 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-
-@* <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Order[0].Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Order[0].Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Order[0].TotalPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Order[0].Status)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Order) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalPrice)
-            </td>
-            <td>
-                @{
-                    string[] statusNames = OrderStatus.StatusNames;
-                    string statusString = statusNames[(int)item.Status];
-                }
-                @Html.DisplayFor(modelItem => statusString)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody> *@
     <section class="bg-white dark:bg-gray-900 p-3 sm:p-5">
         <h2 class="mb-4 text-2xl font-bold text-gray-900 dark:text-white">Order Management</h2>
         <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
@@ -116,10 +69,7 @@
                                                     <a class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" asp-page="./Details" asp-route-id="@item.Id"> Details </a>
                                                 </li>
 
-                                            </ul>
-                                            <div class="py-1">
-                                            <a class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"asp-page="./Delete" asp-route-id="@item.Id" > Delete</a>
-                                            </div>
+                                            </ul>               
                                         </div>
                                     </td>
                                 </tr>

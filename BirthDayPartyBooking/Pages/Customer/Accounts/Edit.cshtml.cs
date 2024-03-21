@@ -10,28 +10,29 @@ using BusinessObject;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Customer.Accounts
 {
     [Authorize(Roles = "Customer")]
     public class EditModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly IAccountRepository _accountRepo;
 
-        public EditModel(BusinessObject.BirthdayPartyBookingContext context)
+        public EditModel(IAccountRepository repository)
         {
-            _context = context;
+            _accountRepo = repository;
         }
 
         [BindProperty]
         public Account Account { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
+        public IActionResult OnGetAsync()
         {
 
             string id = HttpContext.Session.GetString("UserId");
 
-            Account = await _context.Accounts.FirstOrDefaultAsync(m => m.Id.ToString() == id);
+            Account =  _accountRepo.GetAccountByAccountId(id);
 
             return Page();
         }
@@ -44,31 +45,15 @@ namespace BirthDayPartyBooking.Pages.Customer.Accounts
             {
                 return Page();
             }
-
-            _context.Attach(Account).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _accountRepo.Update(Account);
             }
-            catch (DbUpdateConcurrencyException)
+            catch 
             {
-                if (!AccountExists(Account.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(ModelState);
             }
-
-            return RedirectToPage("./");
-        }
-
-        private bool AccountExists(Guid id)
-        {
-            return _context.Accounts.Any(e => e.Id == id);
+            return RedirectToPage("/Customer/Index");
         }
     }
 }

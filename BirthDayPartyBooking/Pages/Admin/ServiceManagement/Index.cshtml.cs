@@ -18,13 +18,11 @@ namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
     public class IndexModel : PageModel
     {
         private readonly IServiceRepository _serviceRepo;
-        private readonly BirthdayPartyBookingContext _context;
         private readonly IConfiguration _configuration;
 
-        public IndexModel(IServiceRepository serviceRepo, BirthdayPartyBookingContext context, IConfiguration configuration)
+        public IndexModel(IServiceRepository serviceRepo, IConfiguration configuration)
         {
             _serviceRepo = serviceRepo;
-            _context = context;
             _configuration = configuration;
         }
 
@@ -36,7 +34,7 @@ namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
 
             var pageSize = _configuration.GetValue("PageSize", 4);
 
-            IQueryable<Service> serivces = _context.Services.Where(o => o.HostId.ToString() == Id);
+            IQueryable<Service> serivces = _serviceRepo.GetAllServicesByHostID(Id);
 
             Service = await PaginatedList<Service>.CreateAsync(serivces.AsNoTracking(), pageIndex ?? 1, pageSize);
         }
