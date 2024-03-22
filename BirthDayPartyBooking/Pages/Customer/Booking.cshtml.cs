@@ -121,6 +121,12 @@ namespace BirthDayPartyBooking.Pages.Customer
             OrderDetails = (orderDetailsJson != null) ? JsonConvert.DeserializeObject<List<OrderDetail>>(orderDetailsJson)
                 : new List<OrderDetail>();
 
+            if(OrderDetails.Count == 0)
+            {
+                TempData["WarningMessage"] = "Pls choose at least 1 service.";
+                return RedirectToPage();
+            }
+
             var placePrice = placeRepo.GetAllPlaceByHostID(Guid.Parse(Id)).FirstOrDefault(p => p.Id == Order.PlaceId);
             var totalPrice = (Order.PlaceId == null) ? 0 : placePrice.Price;
 

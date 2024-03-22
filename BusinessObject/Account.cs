@@ -19,6 +19,7 @@ namespace BusinessObject
         [Required]
         [RegularExpression(@"^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$", ErrorMessage = "Invalid email format")]
         public string Email { get; set; }
+        [Required]
         public string Password { get; set; }
         public string Name { get; set; }
         [Required]

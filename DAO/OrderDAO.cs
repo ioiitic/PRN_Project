@@ -119,7 +119,7 @@ namespace DAO
         {
             try
             {
-                var orders = myDB.Orders.AsNoTracking().Where(o => o.GuestId.ToString() == id);
+                var orders = myDB.Orders.AsNoTracking().Where(o => o.GuestId.ToString() == id).OrderByDescending(s => s.Date);
                                                
                 return orders;
             }

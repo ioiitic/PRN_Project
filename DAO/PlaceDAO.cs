@@ -31,7 +31,7 @@ namespace DAO
         {
             try
             {              
-                var places = myDB.Places.AsNoTracking().Where(p => p.HostId.ToString() == Id && p.DeleteFlag == 0);
+                var places = myDB.Places.AsNoTracking().Where(p => p.HostId.ToString() == Id);
                 return places;
             }
             catch (Exception ex)

@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using Repository.IRepo;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace BirthDayPartyBooking.Pages.Administrator
 {
+    [Authorize(Roles = "Admin")]
     public class ManageAccountModel : PageModel
     {
         private readonly IAccountRepository _accountRepo;

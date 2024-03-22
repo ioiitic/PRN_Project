@@ -46,7 +46,7 @@ namespace DAO
         {
             try
             {
-                var services = myDB.Services.AsNoTracking().Where(s => s.HostId.ToString() == Id && s.DeleteFlag == 0)
+                var services = myDB.Services.AsNoTracking().Where(s => s.HostId.ToString() == Id)
                                                            .Include(s => s.Host)
                                                            .Include(s => s.ServiceType);
                 return services;

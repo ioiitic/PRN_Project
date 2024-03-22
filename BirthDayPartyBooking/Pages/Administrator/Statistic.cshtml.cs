@@ -6,9 +6,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using BusinessObject.ReportData;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace BirthDayPartyBooking.Pages.Administrator
 {
+    [Authorize(Roles = "Admin")]
     public class StatisticModel : PageModel
     {
         public readonly IOrderRepository orderRepo;
