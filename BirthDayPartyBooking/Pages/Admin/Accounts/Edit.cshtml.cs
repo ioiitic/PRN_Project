@@ -10,28 +10,29 @@ using BusinessObject;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using BusinessObject.Enum;
+using Repository.IRepo;
 
 namespace BirthDayPartyBooking.Pages.Admin.Accounts
 {
     [Authorize(Roles = "Host")]
     public class EditModel : PageModel
     {
-        private readonly BusinessObject.BirthdayPartyBookingContext _context;
+        private readonly IAccountRepository accountRepo;
 
-        public EditModel(BusinessObject.BirthdayPartyBookingContext context)
+        public EditModel(IAccountRepository accountRepository)
         {
-            _context = context;
+            accountRepo = accountRepository;
         }
 
         [BindProperty]
         public Account Account { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
+        public IActionResult OnGetAsync()
         {
 
             string id = HttpContext.Session.GetString("UserId");
 
-            Account = await _context.Accounts.FirstOrDefaultAsync(m => m.Id.ToString() == id);
+            Account = accountRepo.GetAccountByAccountId(id);
 
             return Page();
         }
@@ -44,31 +45,17 @@ namespace BirthDayPartyBooking.Pages.Admin.Accounts
             {
                 return Page();
             }
-
-            _context.Attach(Account).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await accountRepo.Update(Account);
             }
-            catch (DbUpdateConcurrencyException)
+            catch
             {
-                if (!AccountExists(Account.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(ModelState);
             }
 
             return RedirectToPage("/Admin/Accounts/Edit");
         }
 
-        private bool AccountExists(Guid id)
-        {
-            return _context.Accounts.Any(e => e.Id == id);
-        }
     }
 }

@@ -27,33 +27,31 @@ namespace DAO
                 }
             }
         }
-        public List<Place> GetAllPlace(Guid Id)
+        public IQueryable<Place> GetAllPlace(string Id)
         {
-            List<Place> places = new List<Place>();
             try
-            {
-                places = myDB.Places.AsNoTracking().Where(p => p.HostId == Id).ToList();
+            {              
+                var places = myDB.Places.AsNoTracking().Where(p => p.HostId.ToString() == Id);
+                return places;
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-            return places;
         }
-        public async Task<List<Place>> GetAllPlaceByHostID(string Id)
+        public List<Place> GetAllPlaceByHostID(Guid Id)
         {
-            List<Place> places = new List<Place>();
             try
             {
-                places = await myDB.Places.AsNoTracking().Where(p => p.HostId.ToString() == Id && p.DeleteFlag == 0)
+                var places =  myDB.Places.AsNoTracking().Where(p => p.HostId == Id && p.DeleteFlag == 0)
                                           .Include(p => p.Host)
-                                          .ToListAsync();
+                                          .ToList();
+                return places;
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-            return places;
         }
         public async Task<Place> GetAllPlaceByHostIDAndPlaceID(string HostId, Guid placeId)
         {

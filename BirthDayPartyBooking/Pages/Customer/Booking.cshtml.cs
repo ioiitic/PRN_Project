@@ -72,7 +72,7 @@ namespace BirthDayPartyBooking.Pages.Customer
                 }
             }
 
-            ViewData["PlaceId"] = new SelectList(placeRepo.GetAllPlace(Host.Id).Select(p => new
+            ViewData["PlaceId"] = new SelectList(placeRepo.GetAllPlaceByHostID(Host.Id).Select(p => new
             {   
                 p.Id,
                 NameAndAddress = p.Name + ", " + p.Address + " - $" + p.Price
@@ -82,7 +82,7 @@ namespace BirthDayPartyBooking.Pages.Customer
             OrderDetails = (orderDetailsJson != null) ? JsonConvert.DeserializeObject<List<OrderDetail>>(orderDetailsJson)
                 : new List<OrderDetail>();
 
-            var totalPrice = (Order.PlaceId==null)?0:(placeRepo.GetAllPlace(Host.Id).FirstOrDefault(p => p.Id == Order.Id)).Price;
+            var totalPrice = (Order.PlaceId==null)?0:(placeRepo.GetAllPlaceByHostID(Host.Id).FirstOrDefault(p => p.Id == Order.Id)).Price;
 
             foreach(OrderDetail orderDetail in OrderDetails)
             {
@@ -104,8 +104,12 @@ namespace BirthDayPartyBooking.Pages.Customer
                 HttpContext.Session.SetString("HostId", Id);
             else
                 Id = HttpContext.Session.GetString("HostId");
-
-            var check = orderRepo.CheckOrderExist(Order, Id);
+            if(Order.Date > DateTime.Now.AddYears(1))
+            {
+                TempData["WarningMessage"] = "Please not book so far.";
+                return RedirectToPage();
+            }
+            var check = orderRepo.CheckOrderExist(Order);
            
             if (check)
             {
@@ -117,7 +121,13 @@ namespace BirthDayPartyBooking.Pages.Customer
             OrderDetails = (orderDetailsJson != null) ? JsonConvert.DeserializeObject<List<OrderDetail>>(orderDetailsJson)
                 : new List<OrderDetail>();
 
-            var placePrice = placeRepo.GetAllPlace(Guid.Parse(Id)).FirstOrDefault(p => p.Id == Order.PlaceId);
+            if(OrderDetails.Count == 0)
+            {
+                TempData["WarningMessage"] = "Pls choose at least 1 service.";
+                return RedirectToPage();
+            }
+
+            var placePrice = placeRepo.GetAllPlaceByHostID(Guid.Parse(Id)).FirstOrDefault(p => p.Id == Order.PlaceId);
             var totalPrice = (Order.PlaceId == null) ? 0 : placePrice.Price;
 
             foreach (OrderDetail orderDetail in OrderDetails)

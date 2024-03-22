@@ -19,8 +19,12 @@ namespace Repository.Repo
 
         public Account GetAccountByAccountId(string id) => AccountDAO.Instance.GetAccountByAccountId(id);
 
+        public Task<List<Account>> GetAllAccounts() => AccountDAO.Instance.GetAllAccounts();
+
         public Task<List<Account>> GetAllActiveAccounts() => AccountDAO.Instance.GetAllActiveAccounts();
 
         public Task<List<Account>> GetAllActiveHosts() => AccountDAO.Instance.GetAllActiveHosts();
+
+        public Task Update(Account account) => AccountDAO.Instance.Update(account);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using BusinessObject.ReportData;
 using DAO;
 using Repository.IRepo;
 using System;
@@ -13,15 +14,23 @@ namespace Repository.Repo
     {
         public void AddNew(Order order) => OrderDAO.Instance.AddNew(order);
 
-        public bool CheckOrderExist(Order order, string Id) => OrderDAO.Instance.CheckOrderExist(order, Id);
+        public bool CheckOrderExist(Order order) => OrderDAO.Instance.CheckOrderExist(order);
 
         public Task<List<Order>> GetAllActiveorders() => OrderDAO.Instance.GetAllActiveorders();
 
-        public Task<List<Order>> GetOrderByCustomerID(string id) => OrderDAO.Instance.GetOrderByCustomerID(id);
+        public Task<List<HostOrderSummary>> GetHostOrderSummaries() => OrderDAO.Instance.GetHostOrderSummaries();
 
-        public Task<List<Order>> GetOrderByHostID(string id) => OrderDAO.Instance.GetOrderByHostID(id);
+        public Task<List<HostOrderSummary>> GetHostOrderSummariesByDate(DateTime startDate, DateTime endDate) => OrderDAO.Instance.GetHostOrderSummariesByDate(startDate, endDate);
+
+        public IQueryable<Order> GetOrderByCustomerID(string id) => OrderDAO.Instance.GetOrderByCustomerID(id);
+
+        public Task<List<Order>> GetOrderByDate(DateTime startDate, DateTime endDate) => OrderDAO.Instance.GetOrderByDate(startDate, endDate);
+
+        public IQueryable<Order> GetOrderByHostID(string id) => OrderDAO.Instance.GetOrderByHostID(id);
 
         public Task<Order> GetOrderByOrderID(Guid id) => OrderDAO.Instance.GetOrderByOrderID(id);
+
+        public Task<List<Order>> GetOrderForReport() => OrderDAO.Instance.GetOrderForReport();
 
         public Task Remove(Order order) => OrderDAO.Instance.Remove(order);
         public Task Update(Order order) => OrderDAO.Instance.Update(order);

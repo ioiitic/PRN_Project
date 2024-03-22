@@ -18,27 +18,56 @@ namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
     public class IndexModel : PageModel
     {
         private readonly IServiceRepository _serviceRepo;
-        private readonly BirthdayPartyBookingContext _context;
         private readonly IConfiguration _configuration;
 
-        public IndexModel(IServiceRepository serviceRepo, BirthdayPartyBookingContext context, IConfiguration configuration)
+        public IndexModel(IServiceRepository serviceRepo, IConfiguration configuration)
         {
             _serviceRepo = serviceRepo;
-            _context = context;
             _configuration = configuration;
         }
 
         public PaginatedList<Service> Service { get; set; }
 
+        public int? PageIndex { get; set; }
+
         public async Task OnGetAsync(int? pageIndex)
         {
+            string Id = HttpContext.Session.GetString("UserId");
+            PageIndex = pageIndex;
+
+            var pageSize = _configuration.GetValue("PageSize", 4);
+
+            IQueryable<Service> serivces = _serviceRepo.GetAllServicesByHostID(Id);
+
+            Service = await PaginatedList<Service>.CreateAsync(serivces.AsNoTracking(), pageIndex ?? 1, pageSize);
+        }
+
+
+        public async Task<IActionResult> OnPostAsync(Guid itemId)
+        {
+            var item = _serviceRepo.GetServiceByServiceID(itemId);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            item.DeleteFlag = item.DeleteFlag == 1 ? 0 : 1;
+            try
+            {
+                await _serviceRepo.Update(item);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
             string Id = HttpContext.Session.GetString("UserId");
 
             var pageSize = _configuration.GetValue("PageSize", 4);
 
-            IQueryable<Service> serivces = _context.Services.Where(o => o.HostId.ToString() == Id);
+            IQueryable<Service> serivces = _serviceRepo.GetAllServicesByHostID(Id);
 
-            Service = await PaginatedList<Service>.CreateAsync(serivces.AsNoTracking(), pageIndex ?? 1, pageSize);
+            Service = await PaginatedList<Service>.CreateAsync(serivces.AsNoTracking(), PageIndex ?? 1, pageSize);
+            return Page();
         }
     }
 }

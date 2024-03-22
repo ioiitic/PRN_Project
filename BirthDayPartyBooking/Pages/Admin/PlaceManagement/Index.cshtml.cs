@@ -18,27 +18,54 @@ namespace BirthDayPartyBooking.Pages.Admin.PlaceManagement
     public class IndexModel : PageModel
     {
         private readonly IPlaceRepository _placeRepo;
-        private readonly BirthdayPartyBookingContext _context;
         private readonly IConfiguration _configuration;
 
-        public IndexModel(IPlaceRepository placeRepo, BirthdayPartyBookingContext context, IConfiguration configuration)
+        public IndexModel(IPlaceRepository placeRepo, IConfiguration configuration)
         {
             _placeRepo = placeRepo;
-            _context = context;
             _configuration = configuration;
         }
 
         public PaginatedList<Place> Place { get; set; }
+        public int? PageIndex { get; set; }
 
         public async Task OnGetAsync(int? pageIndex)
         {
             string Id = HttpContext.Session.GetString("UserId");
 
+            PageIndex = pageIndex;
+
             var pageSize = _configuration.GetValue("PageSize", 4);
 
-            IQueryable<Place> places = _context.Places.Where(o => o.HostId.ToString() == Id);
+            IQueryable<Place> places = _placeRepo.GetAllPlace(Id);
 
             Place = await PaginatedList<Place>.CreateAsync(places.AsNoTracking(), pageIndex ?? 1, pageSize);
+        }
+        public async Task<IActionResult> OnPostAsync(Guid itemId)
+        {
+            var item = await _placeRepo.GetPlaceByPlaceID(itemId);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            item.DeleteFlag = item.DeleteFlag == 1 ? 0 : 1;
+            try
+            {
+                await _placeRepo.Update(item);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            string Id = HttpContext.Session.GetString("UserId");
+
+            var pageSize = _configuration.GetValue("PageSize", 4);
+
+            IQueryable<Place> places = _placeRepo.GetAllPlace(Id);
+
+            Place = await PaginatedList<Place>.CreateAsync(places.AsNoTracking(), PageIndex ?? 1, pageSize);
+            return Page();
         }
     }
 }

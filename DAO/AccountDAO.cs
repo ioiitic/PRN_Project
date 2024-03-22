@@ -42,6 +42,20 @@ namespace DAO
             return accounts;
         }
 
+        public async Task<List<Account>> GetAllAccounts()
+        {
+            List<Account> accounts;
+            try
+            {
+                accounts = await myDB.Accounts.AsNoTracking().OrderBy(s => s.Role).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return accounts;
+        }
+
         public async Task<List<Account>> GetAllActiveHosts()
         {
             List<Account> accounts;
@@ -107,6 +121,28 @@ namespace DAO
                 myDB.SaveChanges();
                 myDB.Entry(account).State = EntityState.Detached;
 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task Update(Account account)
+        {
+            try
+            {
+                Account _account = GetAccountByAccountId(account.Id.ToString());
+                if (_account != null)
+                {
+                    myDB.Entry<Account>(account).State = EntityState.Modified;
+                    await myDB.SaveChangesAsync();
+                    myDB.Entry(account).State = EntityState.Detached;
+                }
+                else
+                {
+                    throw new Exception("The Account not found.");
+                }
             }
             catch (Exception ex)
             {

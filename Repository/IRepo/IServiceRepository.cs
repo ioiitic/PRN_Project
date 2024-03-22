@@ -10,7 +10,7 @@ namespace Repository.IRepo
     public interface IServiceRepository
     {
         List<Service> GetValidServices(Guid Id);
-        Task<List<Service>> GetAllServicesByHostID(string Id);
+        IQueryable<Service> GetAllServicesByHostID(string Id);
         List<Service> GetAllServices();
         List<ServiceType> GetAllServiceTypes();
         Service GetServiceByServiceID(Guid Id);

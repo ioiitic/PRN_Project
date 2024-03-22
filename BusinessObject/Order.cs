@@ -20,6 +20,7 @@ namespace BusinessObject
         public string Note { get; set; }
         public Guid? PlaceId { get; set; }
         public int? DeleteFlag { get; set; }
+        [Required]
         public DateTime? Date { get; set; }
         public int? Status { get; set; }
         [Required]

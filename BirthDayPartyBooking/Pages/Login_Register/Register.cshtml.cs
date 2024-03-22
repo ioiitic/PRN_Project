@@ -28,12 +28,22 @@ namespace BirthDayPartyBooking.Pages.Login_Register
         [BindProperty]
         public Account Account { get; set; }
 
+        [BindProperty]
+        public string ConfirmPassword { get; set; }
+
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public IActionResult OnPost()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
+            }
+            if(Account.Password != ConfirmPassword)
+            {
+
+                TempData["WarningMessage"] = "Your Password not match";
+                TempData["Account"] = Newtonsoft.Json.JsonConvert.SerializeObject(Account); // Serialize the Account object to a string
+                return RedirectToPage();
             }
             var checkEmail = accountRepo.CheckEmailExist(Account.Email);
             if (checkEmail)
