@@ -68,6 +68,12 @@ namespace DAO
             }
             return orders;
         }
+        public async Task<List<Order>> GetOrdersByStatus(int status)
+        {
+            return await myDB.Orders.Include(s => s.Host)
+                                    .Where(o => o.Status == status)
+                                    .ToListAsync();
+        }
         public IQueryable<Order> GetOrderByHostID(string id)
         {
             try

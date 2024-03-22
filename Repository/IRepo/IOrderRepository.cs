@@ -14,6 +14,7 @@ namespace Repository.IRepo
         Task<List<Order>> GetOrderForReport();
         Task<List<Order>> GetOrderByDate(DateTime startDate, DateTime endDate);
         Task<List<HostOrderSummary>> GetHostOrderSummaries();
+        Task<List<Order>> GetOrdersByStatus(int status);
         Task<List<HostOrderSummary>> GetHostOrderSummariesByDate(DateTime startDate, DateTime endDate);
         IQueryable<Order> GetOrderByHostID(string id);
         IQueryable<Order> GetOrderByCustomerID(string id);

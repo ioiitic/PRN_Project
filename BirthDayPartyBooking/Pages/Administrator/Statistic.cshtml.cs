@@ -19,6 +19,8 @@ namespace BirthDayPartyBooking.Pages.Administrator
         public StatisticModel(IOrderRepository repo)
         {
             orderRepo = repo;
+            StartDate = DateTime.Now;
+            EndDate = DateTime.Now;
         }
 
         [BindProperty]

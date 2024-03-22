@@ -11,6 +11,8 @@ namespace Repository.IRepo
     {
         Task<List<Account>> GetAllActiveAccounts();
         Task<List<Account>> GetAllAccounts();
+        Task<IList<Account>> GetAccounts(string searchString);
+
         Task<List<Account>> GetAllActiveHosts();
         Account GetAccountByAccountId(string id);
         Account CheckLogin(string Email, string Password);
