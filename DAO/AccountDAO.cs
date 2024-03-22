@@ -42,6 +42,12 @@ namespace DAO
             return accounts;
         }
 
+        public async Task<IList<Account>> GetAccounts(string searchString)
+        {
+            return await myDB.Accounts.Where(a => a.Name.Contains(searchString))
+                                      .ToListAsync();
+        }
+
         public async Task<List<Account>> GetAllAccounts()
         {
             List<Account> accounts;

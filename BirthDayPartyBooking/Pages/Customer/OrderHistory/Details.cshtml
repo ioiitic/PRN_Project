@@ -86,20 +86,46 @@
         @if (@Model.Order.Status == 1)
         {
             <dl class="row">
-                <form method="post" asp-page-handler="Pay">
-                    <input type="hidden" asp-for="Order.Id" />
-                    <div class="form-group">
-                        <input type="submit" value="Pay" class="btn btn-primary" />
-                    </div>
-                </form>
-                <form method="post" asp-page-handler="Cancel">
-                    <input type="hidden" asp-for="Order.Id" />
-                    <div class="form-group">
-                        <input type="submit" value="Cancel" class="btn btn-secondary" />
-                    </div>
-                </form>
+                <div class="button-container">
+                    <form method="post" asp-page-handler="Pay">
+                        <input type="hidden" asp-for="Order.Id" />
+                        <div class="form-group">
+                            <input type="submit" value="Pay" class="btn-success" />
+                        </div>
+                    </form>
+                    <form method="post" asp-page-handler="Cancel">
+                        <input type="hidden" asp-for="Order.Id" />
+                        <div class="form-group">
+                            <input type="submit" value="Cancel" class="btn-danger" />
+                        </div>
+                    </form>
+                </div>
             </dl>
         }
 
     </div>
 </section>
+<style>
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+        .button-container button {
+            flex: 1 1 auto;
+            margin: 5px;
+            width: 100%; /* Add this line */
+        }
+
+    .btn-success, .btn-danger {
+        background-color: green;
+        color: white;
+        width: 150px; /* Set a fixed width */
+    }
+
+    .btn-danger {
+        background-color: red;
+        color: white;
+        width: 150px; /* Set a fixed width */
+    }
+</style>

@@ -32,6 +32,8 @@ namespace Repository.Repo
 
         public Task<List<Order>> GetOrderForReport() => OrderDAO.Instance.GetOrderForReport();
 
+        public Task<List<Order>> GetOrdersByStatus(int status) => OrderDAO.Instance.GetOrdersByStatus(status);
+
         public Task Remove(Order order) => OrderDAO.Instance.Remove(order);
         public Task Update(Order order) => OrderDAO.Instance.Update(order);
     }

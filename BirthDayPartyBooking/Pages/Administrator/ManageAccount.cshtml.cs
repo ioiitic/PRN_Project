@@ -19,10 +19,12 @@ namespace BirthDayPartyBooking.Pages.Administrator
 
         public ManageAccountModel(IAccountRepository accountRepo)
         {
-            _accountRepo = accountRepo; 
+            _accountRepo = accountRepo;
         }
 
-        public IList<Account> Account { get;set; }
+        public IList<Account> Account { get; set; }
+        [BindProperty]
+        public string SearchString { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -46,6 +48,19 @@ namespace BirthDayPartyBooking.Pages.Administrator
                 return BadRequest(ex.Message);
             }
             Account = await _accountRepo.GetAllAccounts();
+            return Page();
+        }
+        public async Task<IActionResult> OnPostSearchAsync()
+        {
+            if (!string.IsNullOrEmpty(SearchString))
+            {
+                Account = await _accountRepo.GetAccounts(SearchString);
+            }
+            else
+            {
+                Account = await _accountRepo.GetAllAccounts();
+            }
+
             return Page();
         }
     }
