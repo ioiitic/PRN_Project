@@ -33,7 +33,7 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
             vnpay.AddRequestData("vnp_Version", VnPayLibrary.VERSION);
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_TmnCode", vnp_TmnCode);
-            vnpay.AddRequestData("vnp_Amount", (order.TotalPrice * 100000).ToString());
+            vnpay.AddRequestData("vnp_Amount", (order.TotalPrice * 100 * 23000).ToString());
 
             vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
             vnpay.AddRequestData("vnp_CurrCode", "VND");

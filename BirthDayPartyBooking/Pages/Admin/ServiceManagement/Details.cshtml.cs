@@ -35,7 +35,7 @@ namespace BirthDayPartyBooking.Pages.Admin.ServiceManagement
 
             string Id = HttpContext.Session.GetString("UserId");
 
-            Service = await serviceRepo.GetServiceByServiceIDAndHostID(id.Value, Id);
+            Service = serviceRepo.GetServiceByServiceID(id.Value);
 
             if (Service == null)
             {

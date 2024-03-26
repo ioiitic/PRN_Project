@@ -18,6 +18,7 @@ namespace BusinessObject
         public string Description { get; set; }
         [Required]
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Invalid price")]
+        [Range(1, int.MaxValue, ErrorMessage = "Invalid price")]
         public int? Price { get; set; }
         public Guid? ServiceTypeId { get; set; }
         public Guid? HostId { get; set; }

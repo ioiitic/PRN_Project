@@ -88,7 +88,7 @@ namespace BirthDayPartyBooking.Pages.Customer
             {
                 orderDetail.Service = serviceRepo.GetServiceByServiceID(orderDetail.ServiceId.Value);
                 var typeId = orderDetail.Service.ServiceTypeId;
-                orderDetail.Service.ServiceType = serviceRepo.GetServiceTypeByServiceTypeID(orderDetail.ServiceId.Value);
+                orderDetail.Service.ServiceType = serviceRepo.GetServiceTypeByServiceTypeID(typeId.Value);
                 totalPrice += orderDetail.Price.Value;
             }
 

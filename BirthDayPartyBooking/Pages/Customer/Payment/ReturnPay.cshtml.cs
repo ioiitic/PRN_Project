@@ -54,7 +54,7 @@ namespace BirthDayPartyBooking.Pages.Customer.Payment
                 {
                     var order =await orderRepo.GetOrderByOrderID(Guid.Parse(orderId));
                     order.Status = 4;
-                    await orderRepo.Update(order);    
+                    await orderRepo.Update(order);
                 }
                 else
                 {
